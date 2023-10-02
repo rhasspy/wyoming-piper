@@ -93,7 +93,12 @@ async def main() -> None:
                 name="rhasspy", url="https://github.com/rhasspy/piper"
             ),
             installed=True,
-            languages=[voice_info["language"]["code"]],
+            languages=[
+                voice_info.get("language", {}).get(
+                    "code",
+                    voice_info.get("espeak", {}).get("voice", voice_name.split("_")[0]),
+                )
+            ],
             #
             # Don't send speakers for now because it overflows StreamReader buffers
             # speakers=[

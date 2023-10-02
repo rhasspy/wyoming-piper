@@ -1079,6 +1079,36 @@
         },
         "aliases": []
     },
+    "en_US-hfc_male-medium": {
+        "key": "en_US-hfc_male-medium",
+        "name": "hfc_male",
+        "language": {
+            "code": "en_US",
+            "family": "en",
+            "region": "US",
+            "name_native": "English",
+            "name_english": "English",
+            "country_english": "United States"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "en/en_US/hfc_male/medium/en_US-hfc_male-medium.onnx": {
+                "size_bytes": 63201294,
+                "md5_digest": "cd2fda1933f0653d3ddc85e5f30ebdd2"
+            },
+            "en/en_US/hfc_male/medium/en_US-hfc_male-medium.onnx.json": {
+                "size_bytes": 5033,
+                "md5_digest": "9b4849dbc1e72f35de7391528dea60d9"
+            },
+            "en/en_US/hfc_male/medium/MODEL_CARD": {
+                "size_bytes": 352,
+                "md5_digest": "0bc174f6fe7a6d795a790110e8bf9096"
+            }
+        },
+        "aliases": []
+    },
     "en_US-joe-medium": {
         "key": "en_US-joe-medium",
         "name": "joe",
@@ -3760,6 +3790,36 @@
         },
         "aliases": []
     },
+    "hu_HU-imre-medium": {
+        "key": "hu_HU-imre-medium",
+        "name": "imre",
+        "language": {
+            "code": "hu_HU",
+            "family": "hu",
+            "region": "HU",
+            "name_native": "Magyar",
+            "name_english": "Hungarian",
+            "country_english": "Hungary"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "hu/hu_HU/imre/medium/hu_HU-imre-medium.onnx": {
+                "size_bytes": 63201294,
+                "md5_digest": "aa0b1d1fdd539881c64ed249097e75ff"
+            },
+            "hu/hu_HU/imre/medium/hu_HU-imre-medium.onnx.json": {
+                "size_bytes": 5019,
+                "md5_digest": "9b6974c685cd8289619660f5e078de06"
+            },
+            "hu/hu_HU/imre/medium/MODEL_CARD": {
+                "size_bytes": 277,
+                "md5_digest": "3efe4f497211542985d2d52d403eecad"
+            }
+        },
+        "aliases": []
+    },
     "is_IS-bui-medium": {
         "key": "is_IS-bui-medium",
         "name": "bui",
@@ -4463,6 +4523,36 @@
             "pl/pl_PL/gosia/medium/MODEL_CARD": {
                 "size_bytes": 274,
                 "md5_digest": "e1355330fe5fab166e6f2e20af7e91e9"
+            }
+        },
+        "aliases": []
+    },
+    "pl_PL-mc_speech-medium": {
+        "key": "pl_PL-mc_speech-medium",
+        "name": "mc_speech",
+        "language": {
+            "code": "pl_PL",
+            "family": "pl",
+            "region": "PL",
+            "name_native": "Polski",
+            "name_english": "Polish",
+            "country_english": "Poland"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "pl/pl_PL/mc_speech/medium/pl_PL-mc_speech-medium.onnx": {
+                "size_bytes": 63201294,
+                "md5_digest": "a927e2f2c882bb40cbc2e5f3356ce19b"
+            },
+            "pl/pl_PL/mc_speech/medium/pl_PL-mc_speech-medium.onnx.json": {
+                "size_bytes": 4961,
+                "md5_digest": "3f506e68bb9531b11e94e5f5dda5dd21"
+            },
+            "pl/pl_PL/mc_speech/medium/MODEL_CARD": {
+                "size_bytes": 296,
+                "md5_digest": "affe6073af7777237f73d0768103547e"
             }
         },
         "aliases": []

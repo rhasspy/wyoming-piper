@@ -4,7 +4,8 @@ import logging
 import shutil
 from pathlib import Path
 from typing import Any, Dict, Iterable, Set, Tuple, Union
-from urllib.request import urlopen
+from urllib.parse import quote, urlsplit, urlunsplit
+from urllib.request import urlopen, URLError
 
 from .file_hash import get_file_hash
 
@@ -20,6 +21,13 @@ class VoiceNotFoundError(Exception):
     pass
 
 
+def _quote_url(url: str) -> str:
+    """Quote file part of URL in case it contains UTF-8 characters."""
+    parts = list(urlsplit(url))
+    parts[2] = quote(parts[2])
+    return urlunsplit(parts)
+
+
 def get_voices(
     download_dir: Union[str, Path], update_voices: bool = False
 ) -> Dict[str, Any]:
@@ -32,7 +40,7 @@ def get_voices(
         try:
             voices_url = URL_FORMAT.format(file="voices.json")
             _LOGGER.debug("Downloading %s to %s", voices_url, voices_download)
-            with urlopen(voices_url) as response:
+            with urlopen(_quote_url(voices_url)) as response:
                 with open(voices_download, "wb") as download_file:
                     shutil.copyfileobj(response, download_file)
         except Exception:
@@ -72,6 +80,7 @@ def ensure_voice_exists(
 
     voice_info = voices_info[name]
     voice_files = voice_info["files"]
+    verified_files: Set[str] = set()
     files_to_download: Set[str] = set()
 
     for data_dir in data_dirs:
@@ -79,8 +88,8 @@ def ensure_voice_exists(
 
         # Check sizes/hashes
         for file_path, file_info in voice_files.items():
-            if file_path in files_to_download:
-                # Already planning to download
+            if file_path in verified_files:
+                # Already verified this file in a different data directory
                 continue
 
             file_name = Path(file_path).name
@@ -118,28 +127,36 @@ def ensure_voice_exists(
                 files_to_download.add(file_path)
                 continue
 
+            # File exists and has been verified
+            verified_files.add(file_path)
+            files_to_download.discard(file_path)
+
     if (not voice_files) and (not files_to_download):
         raise ValueError(f"Unable to find or download voice: {name}")
 
-    # Download missing files
-    download_dir = Path(download_dir)
+    try:
+        # Download missing or update to date files
+        download_dir = Path(download_dir)
 
-    for file_path in files_to_download:
-        file_name = Path(file_path).name
-        if file_name in _SKIP_FILES:
-            continue
+        for file_path in files_to_download:
+            file_name = Path(file_path).name
+            if file_name in _SKIP_FILES:
+                continue
 
-        file_url = URL_FORMAT.format(file=file_path)
-        download_file_path = download_dir / file_name
-        download_file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_url = URL_FORMAT.format(file=file_path)
+            download_file_path = download_dir / file_name
+            download_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-        _LOGGER.debug("Downloading %s to %s", file_url, download_file_path)
-        with urlopen(file_url) as response, open(
-            download_file_path, "wb"
-        ) as download_file:
-            shutil.copyfileobj(response, download_file)
+            _LOGGER.debug("Downloading %s to %s", file_url, download_file_path)
+            with urlopen(_quote_url(file_url)) as response, open(
+                download_file_path, "wb"
+            ) as download_file:
+                shutil.copyfileobj(response, download_file)
 
-        _LOGGER.info("Downloaded %s (%s)", download_file_path, file_url)
+            _LOGGER.info("Downloaded %s (%s)", download_file_path, file_url)
+    except URLError:
+        # find_voice will fail down the line
+        _LOGGER.exception("Unexpected error while downloading files for %s", name)
 
 
 def find_voice(name: str, data_dirs: Iterable[Union[str, Path]]) -> Tuple[Path, Path]:
