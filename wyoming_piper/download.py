@@ -4,8 +4,9 @@ import logging
 import shutil
 from pathlib import Path
 from typing import Any, Dict, Iterable, Set, Tuple, Union
+from urllib.error import URLError
 from urllib.parse import quote, urlsplit, urlunsplit
-from urllib.request import urlopen, URLError
+from urllib.request import urlopen
 
 from .file_hash import get_file_hash
 
