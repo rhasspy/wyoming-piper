@@ -65,6 +65,11 @@ async def main() -> None:
         action="store_true",
         help="Download latest voices.json during startup",
     )
+    parser.add_argument(
+        "--cuda",
+        action="store_true",
+        help="Use GPU"
+    )
     #
     parser.add_argument("--debug", action="store_true", help="Log DEBUG messages")
     args = parser.parse_args()
