@@ -8,6 +8,7 @@ import wave
 from typing import Any, Dict, Optional
 
 from wyoming.audio import AudioChunk, AudioStart, AudioStop
+from wyoming.error import Error
 from wyoming.event import Event
 from wyoming.info import Describe, Info
 from wyoming.server import AsyncEventHandler
@@ -43,6 +44,15 @@ class PiperEventHandler(AsyncEventHandler):
             _LOGGER.warning("Unexpected event: %s", event)
             return True
 
+        try:
+            return await self._handle_event(event)
+        except Exception as err:
+            await self.write_event(
+                Error(text=str(err), code=err.__class__.__name__).event()
+            )
+            raise err
+
+    async def _handle_event(self, event: Event) -> bool:
         synthesize = Synthesize.from_event(event)
         _LOGGER.debug(synthesize)
 

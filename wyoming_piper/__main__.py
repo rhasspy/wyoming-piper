@@ -7,9 +7,10 @@ from functools import partial
 from pathlib import Path
 from typing import Any, Dict, Set
 
-from wyoming.info import Attribution, Info, TtsProgram, TtsVoice
+from wyoming.info import Attribution, Info, TtsProgram, TtsVoice, TtsVoiceSpeaker
 from wyoming.server import AsyncServer
 
+from . import __version__
 from .download import find_voice, get_voices
 from .handler import PiperEventHandler
 from .process import PiperProcessManager
@@ -67,6 +68,12 @@ async def main() -> None:
     )
     #
     parser.add_argument("--debug", action="store_true", help="Log DEBUG messages")
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=__version__,
+        help="Print version and exit",
+    )
     args = parser.parse_args()
 
     if not args.download_dir:
@@ -74,6 +81,7 @@ async def main() -> None:
         args.download_dir = args.data_dir[0]
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
+    _LOGGER.debug(args)
 
     # Load voice info
     voices_info = get_voices(args.download_dir, update_voices=args.update_voices)
@@ -93,20 +101,19 @@ async def main() -> None:
                 name="rhasspy", url="https://github.com/rhasspy/piper"
             ),
             installed=True,
+            version=None,
             languages=[
                 voice_info.get("language", {}).get(
                     "code",
                     voice_info.get("espeak", {}).get("voice", voice_name.split("_")[0]),
                 )
             ],
-            #
-            # Don't send speakers for now because it overflows StreamReader buffers
-            # speakers=[
-            #     TtsVoiceSpeaker(name=speaker_name)
-            #     for speaker_name in voice_info["speaker_id_map"]
-            # ]
-            # if voice_info.get("speaker_id_map")
-            # else None,
+            speakers=[
+                TtsVoiceSpeaker(name=speaker_name)
+                for speaker_name in voice_info["speaker_id_map"]
+            ]
+            if voice_info.get("speaker_id_map")
+            else None,
         )
         for voice_name, voice_info in voices_info.items()
         if not voice_info.get("_is_alias", False)
@@ -150,6 +157,7 @@ async def main() -> None:
                 TtsVoice(
                     name=custom_name,
                     description=description,
+                    version=None,
                     attribution=Attribution(name="", url=""),
                     installed=True,
                     languages=[lang_code],
@@ -166,6 +174,7 @@ async def main() -> None:
                 ),
                 installed=True,
                 voices=sorted(voices, key=lambda v: v.name),
+                version=__version__,
             )
         ],
     )
