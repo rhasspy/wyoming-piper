@@ -22,7 +22,7 @@ _LOCAL_DIR = _DIR.parent / "local"
 _PIPER_URL = (
     "https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_amd64.tar.gz"
 )
-_TIMEOUT = 1
+_TIMEOUT = 60
 
 
 def download_piper() -> None:
