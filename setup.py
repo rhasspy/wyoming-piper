@@ -42,4 +42,9 @@ setup(
         "Programming Language :: Python :: 3.11",
     ],
     keywords="rhasspy wyoming piper tts",
+    entry_points={
+        'console_scripts': [
+            'wyoming-piper = wyoming_piper:__main__.run'
+        ]
+    },
 )
