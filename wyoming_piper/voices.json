@@ -1,4 +1,34 @@
 {
+    "ar_JO-kareem-low": {
+        "key": "ar_JO-kareem-low",
+        "name": "kareem",
+        "language": {
+            "code": "ar_JO",
+            "family": "ar",
+            "region": "JO",
+            "name_native": "العربية",
+            "name_english": "Arabic",
+            "country_english": "Jordan"
+        },
+        "quality": "low",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "ar/ar_JO/kareem/low/ar_JO-kareem-low.onnx": {
+                "size_bytes": 63201294,
+                "md5_digest": "d335cd06fe4045a7ee9d8fb0712afaa9"
+            },
+            "ar/ar_JO/kareem/low/ar_JO-kareem-low.onnx.json": {
+                "size_bytes": 5022,
+                "md5_digest": "465724f7d2d5f2ff061b53acb8e7f7cc"
+            },
+            "ar/ar_JO/kareem/low/MODEL_CARD": {
+                "size_bytes": 274,
+                "md5_digest": "b6f0eaf5a7fd094be22a1bcb162173fb"
+            }
+        },
+        "aliases": []
+    },
     "ar_JO-kareem-medium": {
         "key": "ar_JO-kareem-medium",
         "name": "kareem",
@@ -310,6 +340,273 @@
         "aliases": [
             "de-kerstin-low"
         ]
+    },
+    "de_DE-mls-medium": {
+        "key": "de_DE-mls-medium",
+        "name": "mls",
+        "language": {
+            "code": "de_DE",
+            "family": "de",
+            "region": "DE",
+            "name_native": "Deutsch",
+            "name_english": "German",
+            "country_english": "Germany"
+        },
+        "quality": "medium",
+        "num_speakers": 236,
+        "speaker_id_map": {
+            "2422": 0,
+            "4536": 1,
+            "2037": 2,
+            "9565": 3,
+            "10148": 4,
+            "6507": 5,
+            "5055": 6,
+            "3503": 7,
+            "252": 8,
+            "9132": 9,
+            "3990": 10,
+            "5753": 11,
+            "5424": 12,
+            "2602": 13,
+            "4174": 14,
+            "3885": 15,
+            "12415": 16,
+            "8470": 17,
+            "11927": 18,
+            "9639": 19,
+            "3494": 20,
+            "2946": 21,
+            "5283": 22,
+            "4533": 23,
+            "2497": 24,
+            "12275": 25,
+            "1649": 26,
+            "146": 27,
+            "8337": 28,
+            "4542": 29,
+            "589": 30,
+            "1998": 31,
+            "3797": 32,
+            "5244": 33,
+            "7328": 34,
+            "7998": 35,
+            "10179": 36,
+            "9610": 37,
+            "20": 38,
+            "253": 39,
+            "12899": 40,
+            "7194": 41,
+            "3759": 42,
+            "2677": 43,
+            "6719": 44,
+            "1897": 45,
+            "11990": 46,
+            "6880": 47,
+            "19": 48,
+            "9515": 49,
+            "327": 50,
+            "3244": 51,
+            "5324": 52,
+            "2234": 53,
+            "3124": 54,
+            "2043": 55,
+            "143": 56,
+            "8139": 57,
+            "9646": 58,
+            "8659": 59,
+            "9538": 60,
+            "989": 61,
+            "5405": 62,
+            "10087": 63,
+            "8294": 64,
+            "4396": 65,
+            "1474": 66,
+            "139": 67,
+            "136": 68,
+            "10791": 69,
+            "7242": 70,
+            "3631": 71,
+            "9908": 72,
+            "7906": 73,
+            "1171": 74,
+            "7479": 75,
+            "5632": 76,
+            "3731": 77,
+            "4650": 78,
+            "135": 79,
+            "145": 80,
+            "137": 81,
+            "1757": 82,
+            "91": 83,
+            "9514": 84,
+            "13494": 85,
+            "1946": 86,
+            "3277": 87,
+            "5595": 88,
+            "278": 89,
+            "7120": 90,
+            "7406": 91,
+            "11695": 92,
+            "1593": 93,
+            "3862": 94,
+            "138": 95,
+            "141": 96,
+            "9948": 97,
+            "1163": 98,
+            "1054": 99,
+            "1844": 100,
+            "4911": 101,
+            "7261": 102,
+            "8223": 103,
+            "7624": 104,
+            "144": 105,
+            "13871": 106,
+            "2974": 107,
+            "5934": 108,
+            "7002": 109,
+            "8769": 110,
+            "3363": 111,
+            "3040": 112,
+            "6067": 113,
+            "9494": 114,
+            "8743": 115,
+            "13255": 116,
+            "1660": 117,
+            "3588": 118,
+            "4748": 119,
+            "8450": 120,
+            "5295": 121,
+            "4705": 122,
+            "8125": 123,
+            "7272": 124,
+            "7320": 125,
+            "1874": 126,
+            "1262": 127,
+            "10870": 128,
+            "12379": 129,
+            "4463": 130,
+            "10349": 131,
+            "2252": 132,
+            "8325": 133,
+            "3052": 134,
+            "4001": 135,
+            "7456": 136,
+            "140": 137,
+            "4739": 138,
+            "11299": 139,
+            "4730": 140,
+            "6659": 141,
+            "2034": 142,
+            "2732": 143,
+            "2158": 144,
+            "3698": 145,
+            "5675": 146,
+            "6315": 147,
+            "10904": 148,
+            "7202": 149,
+            "11480": 150,
+            "10625": 151,
+            "11546": 152,
+            "4576": 153,
+            "4512": 154,
+            "8634": 155,
+            "13626": 156,
+            "1613": 157,
+            "287": 158,
+            "9207": 159,
+            "6982": 160,
+            "1724": 161,
+            "10191": 162,
+            "1091": 163,
+            "2909": 164,
+            "1965": 165,
+            "2506": 166,
+            "4414": 167,
+            "5764": 168,
+            "12776": 169,
+            "1033": 170,
+            "13726": 171,
+            "2314": 172,
+            "6826": 173,
+            "9706": 174,
+            "8427": 175,
+            "9168": 176,
+            "9287": 177,
+            "6905": 178,
+            "4153": 179,
+            "3330": 180,
+            "2859": 181,
+            "5406": 182,
+            "2840": 183,
+            "1920": 184,
+            "9241": 185,
+            "10163": 186,
+            "8305": 187,
+            "12461": 188,
+            "3276": 189,
+            "11413": 190,
+            "10536": 191,
+            "10614": 192,
+            "7579": 193,
+            "8675": 194,
+            "7483": 195,
+            "7270": 196,
+            "8704": 197,
+            "4468": 198,
+            "6611": 199,
+            "11497": 200,
+            "11772": 201,
+            "2792": 202,
+            "11481": 203,
+            "10162": 204,
+            "10819": 205,
+            "8732": 206,
+            "11328": 207,
+            "11920": 208,
+            "6646": 209,
+            "7486": 210,
+            "11870": 211,
+            "12417": 212,
+            "10364": 213,
+            "6117": 214,
+            "6448": 215,
+            "10433": 216,
+            "7515": 217,
+            "5823": 218,
+            "8567": 219,
+            "10947": 220,
+            "11869": 221,
+            "12335": 222,
+            "12500": 223,
+            "13755": 224,
+            "7006": 225,
+            "3685": 226,
+            "5819": 227,
+            "9353": 228,
+            "11355": 229,
+            "12174": 230,
+            "7150": 231,
+            "6952": 232,
+            "11987": 233,
+            "3995": 234,
+            "7449": 235
+        },
+        "files": {
+            "de/de_DE/mls/medium/de_DE-mls-medium.onnx": {
+                "size_bytes": 76961079,
+                "md5_digest": "bb543a8e82b95993cdd2199a0049623b"
+            },
+            "de/de_DE/mls/medium/de_DE-mls-medium.onnx.json": {
+                "size_bytes": 8948,
+                "md5_digest": "3fb96c627820ac38cff6e8c3ac0e4aa0"
+            },
+            "de/de_DE/mls/medium/MODEL_CARD": {
+                "size_bytes": 223,
+                "md5_digest": "e32e1746dddda1336c1b6725afa6251d"
+            }
+        },
+        "aliases": []
     },
     "de_DE-pavoque-low": {
         "key": "de_DE-pavoque-low",
@@ -1075,6 +1372,36 @@
             "en/en_US/danny/low/MODEL_CARD": {
                 "size_bytes": 275,
                 "md5_digest": "62d30d0cccea265949980cb48212ebee"
+            }
+        },
+        "aliases": []
+    },
+    "en_US-hfc_female-medium": {
+        "key": "en_US-hfc_female-medium",
+        "name": "hfc_female",
+        "language": {
+            "code": "en_US",
+            "family": "en",
+            "region": "US",
+            "name_native": "English",
+            "name_english": "English",
+            "country_english": "United States"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx": {
+                "size_bytes": 63201294,
+                "md5_digest": "7abec91f1d6e19e913fbc4a333f62787"
+            },
+            "en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx.json": {
+                "size_bytes": 5033,
+                "md5_digest": "c3d00f54dac3b4068f2576c15c5da3bc"
+            },
+            "en/en_US/hfc_female/medium/MODEL_CARD": {
+                "size_bytes": 354,
+                "md5_digest": "a4a7b5da65e03e6972e44e9555a59aef"
             }
         },
         "aliases": []
@@ -3507,6 +3834,66 @@
         },
         "aliases": []
     },
+    "fa_IR-amir-medium": {
+        "key": "fa_IR-amir-medium",
+        "name": "amir",
+        "language": {
+            "code": "fa_IR",
+            "family": "fa",
+            "region": "IR",
+            "name_native": "فارسی",
+            "name_english": "Farsi",
+            "country_english": "Iran"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "fa/fa_IR/amir/medium/fa_IR-amir-medium.onnx": {
+                "size_bytes": 63531379,
+                "md5_digest": "7c0598c9726427869e1e86447b333539"
+            },
+            "fa/fa_IR/amir/medium/fa_IR-amir-medium.onnx.json": {
+                "size_bytes": 4958,
+                "md5_digest": "48c5e81f5aa4e1c5eba3dda0be403b58"
+            },
+            "fa/fa_IR/amir/medium/MODEL_CARD": {
+                "size_bytes": 264,
+                "md5_digest": "0728165259eb968913a680077607cd5c"
+            }
+        },
+        "aliases": []
+    },
+    "fa_IR-gyro-medium": {
+        "key": "fa_IR-gyro-medium",
+        "name": "gyro",
+        "language": {
+            "code": "fa_IR",
+            "family": "fa",
+            "region": "IR",
+            "name_native": "فارسی",
+            "name_english": "Farsi",
+            "country_english": "Iran"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "fa/fa_IR/gyro/medium/fa_IR-gyro-medium.onnx": {
+                "size_bytes": 63122309,
+                "md5_digest": "479695db58b82141fc48f0499a38a7c9"
+            },
+            "fa/fa_IR/gyro/medium/fa_IR-gyro-medium.onnx.json": {
+                "size_bytes": 4958,
+                "md5_digest": "6289e9785140547040a1e616388dd587"
+            },
+            "fa/fa_IR/gyro/medium/MODEL_CARD": {
+                "size_bytes": 262,
+                "md5_digest": "b30a1713c6e67946e3f1ed33eac06039"
+            }
+        },
+        "aliases": []
+    },
     "fi_FI-harri-low": {
         "key": "fi_FI-harri-low",
         "name": "harri",
@@ -3600,6 +3987,162 @@
         "aliases": [
             "fr-gilles-low"
         ]
+    },
+    "fr_FR-mls-medium": {
+        "key": "fr_FR-mls-medium",
+        "name": "mls",
+        "language": {
+            "code": "fr_FR",
+            "family": "fr",
+            "region": "FR",
+            "name_native": "Français",
+            "name_english": "French",
+            "country_english": "France"
+        },
+        "quality": "medium",
+        "num_speakers": 125,
+        "speaker_id_map": {
+            "1840": 0,
+            "3698": 1,
+            "123": 2,
+            "1474": 3,
+            "12709": 4,
+            "7423": 5,
+            "9242": 6,
+            "8778": 7,
+            "3060": 8,
+            "4512": 9,
+            "6249": 10,
+            "12541": 11,
+            "13634": 12,
+            "10065": 13,
+            "6128": 14,
+            "5232": 15,
+            "5764": 16,
+            "12713": 17,
+            "12823": 18,
+            "6070": 19,
+            "12501": 20,
+            "9121": 21,
+            "1649": 22,
+            "2776": 23,
+            "11772": 24,
+            "5612": 25,
+            "11822": 26,
+            "1590": 27,
+            "5525": 28,
+            "10827": 29,
+            "1243": 30,
+            "13142": 31,
+            "62": 32,
+            "13177": 33,
+            "10620": 34,
+            "8102": 35,
+            "8582": 36,
+            "11875": 37,
+            "7239": 38,
+            "9854": 39,
+            "7377": 40,
+            "10082": 41,
+            "12512": 42,
+            "1329": 43,
+            "2506": 44,
+            "6856": 45,
+            "10058": 46,
+            "103": 47,
+            "14": 48,
+            "6381": 49,
+            "1664": 50,
+            "11954": 51,
+            "66": 52,
+            "1127": 53,
+            "3270": 54,
+            "13611": 55,
+            "13658": 56,
+            "12968": 57,
+            "1989": 58,
+            "12981": 59,
+            "7193": 60,
+            "6348": 61,
+            "7679": 62,
+            "2284": 63,
+            "3182": 64,
+            "3503": 65,
+            "2033": 66,
+            "2771": 67,
+            "7614": 68,
+            "125": 69,
+            "3204": 70,
+            "5595": 71,
+            "5553": 72,
+            "694": 73,
+            "1624": 74,
+            "1887": 75,
+            "2926": 76,
+            "7150": 77,
+            "3190": 78,
+            "3344": 79,
+            "4699": 80,
+            "1798": 81,
+            "1745": 82,
+            "5077": 83,
+            "753": 84,
+            "52": 85,
+            "4174": 86,
+            "4018": 87,
+            "12899": 88,
+            "1844": 89,
+            "4396": 90,
+            "1817": 91,
+            "2155": 92,
+            "2946": 93,
+            "4336": 94,
+            "4609": 95,
+            "1977": 96,
+            "10957": 97,
+            "204": 98,
+            "4650": 99,
+            "5295": 100,
+            "5968": 101,
+            "4744": 102,
+            "2825": 103,
+            "9804": 104,
+            "707": 105,
+            "30": 106,
+            "115": 107,
+            "5840": 108,
+            "2587": 109,
+            "2607": 110,
+            "2544": 111,
+            "28": 112,
+            "27": 113,
+            "177": 114,
+            "112": 115,
+            "94": 116,
+            "2596": 117,
+            "3595": 118,
+            "7032": 119,
+            "7848": 120,
+            "11247": 121,
+            "7439": 122,
+            "2904": 123,
+            "6362": 124
+        },
+        "files": {
+            "fr/fr_FR/mls/medium/fr_FR-mls-medium.onnx": {
+                "size_bytes": 76733750,
+                "md5_digest": "87831389d3ae92347d91e38b0c57add9"
+            },
+            "fr/fr_FR/mls/medium/fr_FR-mls-medium.onnx.json": {
+                "size_bytes": 7036,
+                "md5_digest": "be41a30aab03788f5e5c4fe51620ccbe"
+            },
+            "fr/fr_FR/mls/medium/MODEL_CARD": {
+                "size_bytes": 222,
+                "md5_digest": "88d84c1c548aa27c1d119d2964f8fcf0"
+            }
+        },
+        "aliases": []
     },
     "fr_FR-mls_1840-low": {
         "key": "fr_FR-mls_1840-low",
@@ -3696,6 +4239,36 @@
         "aliases": [
             "fr-siwis-medium"
         ]
+    },
+    "fr_FR-tom-medium": {
+        "key": "fr_FR-tom-medium",
+        "name": "tom",
+        "language": {
+            "code": "fr_FR",
+            "family": "fr",
+            "region": "FR",
+            "name_native": "Français",
+            "name_english": "French",
+            "country_english": "France"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "fr/fr_FR/tom/medium/fr_FR-tom-medium.onnx": {
+                "size_bytes": 63511038,
+                "md5_digest": "5b460c2394a871e675f5c798af149412"
+            },
+            "fr/fr_FR/tom/medium/fr_FR-tom-medium.onnx.json": {
+                "size_bytes": 4959,
+                "md5_digest": "964d58602df7adf76c2401b070f68ea2"
+            },
+            "fr/fr_FR/tom/medium/MODEL_CARD": {
+                "size_bytes": 233,
+                "md5_digest": "d82342c0c27cfbe9342814c7da46cb83"
+            }
+        },
+        "aliases": []
     },
     "fr_FR-upmc-medium": {
         "key": "fr_FR-upmc-medium",
@@ -4371,6 +4944,89 @@
             "nl-rdh-x-low"
         ]
     },
+    "nl_NL-mls-medium": {
+        "key": "nl_NL-mls-medium",
+        "name": "mls",
+        "language": {
+            "code": "nl_NL",
+            "family": "nl",
+            "region": "NL",
+            "name_native": "Nederlands",
+            "name_english": "Dutch",
+            "country_english": "Netherlands"
+        },
+        "quality": "medium",
+        "num_speakers": 52,
+        "speaker_id_map": {
+            "2450": 0,
+            "1724": 1,
+            "1666": 2,
+            "5809": 3,
+            "496": 4,
+            "2506": 5,
+            "7432": 6,
+            "3619": 7,
+            "4429": 8,
+            "3798": 9,
+            "12500": 10,
+            "10587": 11,
+            "2951": 12,
+            "1775": 13,
+            "9861": 14,
+            "880": 15,
+            "3034": 16,
+            "2825": 17,
+            "5438": 18,
+            "3245": 19,
+            "4396": 20,
+            "11290": 21,
+            "11936": 22,
+            "6916": 23,
+            "10294": 24,
+            "10079": 25,
+            "7588": 26,
+            "7579": 27,
+            "123": 28,
+            "3024": 29,
+            "960": 30,
+            "10984": 31,
+            "2792": 32,
+            "7723": 33,
+            "4174": 34,
+            "2981": 35,
+            "5764": 36,
+            "6513": 37,
+            "7884": 38,
+            "6697": 39,
+            "12749": 40,
+            "11157": 41,
+            "2239": 42,
+            "10879": 43,
+            "1085": 44,
+            "8480": 45,
+            "8331": 46,
+            "6282": 47,
+            "10632": 48,
+            "2602": 49,
+            "5367": 50,
+            "11472": 51
+        },
+        "files": {
+            "nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx": {
+                "size_bytes": 76584246,
+                "md5_digest": "f1d4b1452ccfdac24be72085b2b6b55c"
+            },
+            "nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx.json": {
+                "size_bytes": 5856,
+                "md5_digest": "1915807d7cb85274ba957846370fff39"
+            },
+            "nl/nl_NL/mls/medium/MODEL_CARD": {
+                "size_bytes": 225,
+                "md5_digest": "6e5d961780907a4d7746eada893b8eca"
+            }
+        },
+        "aliases": []
+    },
     "nl_NL-mls_5809-low": {
         "key": "nl_NL-mls_5809-low",
         "name": "mls_5809",
@@ -4863,6 +5519,36 @@
         },
         "aliases": []
     },
+    "sl_SI-artur-medium": {
+        "key": "sl_SI-artur-medium",
+        "name": "artur",
+        "language": {
+            "code": "sl_SI",
+            "family": "sl",
+            "region": "SI",
+            "name_native": "Slovenščina",
+            "name_english": "Slovenian",
+            "country_english": "Slovenia"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "sl/sl_SI/artur/medium/sl_SI-artur-medium.onnx": {
+                "size_bytes": 63200492,
+                "md5_digest": "ca0aac61139e446bebf98561e8cf9407"
+            },
+            "sl/sl_SI/artur/medium/sl_SI-artur-medium.onnx.json": {
+                "size_bytes": 4970,
+                "md5_digest": "8683796803bce4e9131eec00a93251ad"
+            },
+            "sl/sl_SI/artur/medium/MODEL_CARD": {
+                "size_bytes": 329,
+                "md5_digest": "c7547b0d2c97f38dcbb231c5e77c75c9"
+            }
+        },
+        "aliases": []
+    },
     "sr_RS-serbski_institut-medium": {
         "key": "sr_RS-serbski_institut-medium",
         "name": "serbski_institut",
@@ -5012,6 +5698,36 @@
             "tr/tr_TR/fahrettin/medium/MODEL_CARD": {
                 "size_bytes": 279,
                 "md5_digest": "f0fe18e5a6b7615d59a89dfe4873247f"
+            }
+        },
+        "aliases": []
+    },
+    "tr_TR-fettah-medium": {
+        "key": "tr_TR-fettah-medium",
+        "name": "fettah",
+        "language": {
+            "code": "tr_TR",
+            "family": "tr",
+            "region": "TR",
+            "name_native": "Türkçe",
+            "name_english": "Turkish",
+            "country_english": "Turkey"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "tr/tr_TR/fettah/medium/tr_TR-fettah-medium.onnx": {
+                "size_bytes": 63201294,
+                "md5_digest": "596984449bd075fc18e6412c66ed99c2"
+            },
+            "tr/tr_TR/fettah/medium/tr_TR-fettah-medium.onnx.json": {
+                "size_bytes": 4877,
+                "md5_digest": "583aa5f4bfac5237afb1cdbdf5bfc992"
+            },
+            "tr/tr_TR/fettah/medium/MODEL_CARD": {
+                "size_bytes": 276,
+                "md5_digest": "9c51c87dc191bd556c0634793c233d5c"
             }
         },
         "aliases": []
