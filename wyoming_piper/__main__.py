@@ -74,6 +74,9 @@ async def main() -> None:
     #
     parser.add_argument("--debug", action="store_true", help="Log DEBUG messages")
     parser.add_argument(
+        "--log-format", default=logging.BASIC_FORMAT, help="Format for log messages"
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=__version__,
@@ -85,7 +88,9 @@ async def main() -> None:
         # Default to first data directory
         args.download_dir = args.data_dir[0]
 
-    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
+    logging.basicConfig(
+        level=logging.DEBUG if args.debug else logging.INFO, format=args.log_format
+    )
     _LOGGER.debug(args)
 
     # Load voice info
