@@ -3834,6 +3834,36 @@
         },
         "aliases": []
     },
+    "es_MX-claude-high": {
+      "key": "es_MX-claude-high",
+      "name": "claude",
+      "language": {
+        "code": "es_MX",
+        "family": "es",
+        "region": "MX",
+        "name_native": "Español",
+        "name_english": "Spanish",
+        "country_english": "Mexico"
+      },
+      "quality": "high",
+      "num_speakers": 1,
+      "speaker_id_map": {},
+      "files": {
+        "es/es_MX/claude/high/es_MX-claude-high.onnx": {
+          "size_bytes": 63122309,
+          "md5_digest": "cb1966e0ff20ca3aa010f6c9a0ce296a"
+        },
+        "es/es_MX/claude/high/es_MX-claude-high.onnx.json": {
+          "size_bytes": 4963,
+          "md5_digest": "36882201922fabb409f18d284af3eddd"
+        },
+        "es/es_MX/claude/high/MODEL_CARD": {
+          "size_bytes": 247,
+          "md5_digest": "bca99dc9b9a6c8f2f8563d73d52c4a3b"
+        }
+      },
+      "aliases": []
+    },
     "fa_IR-amir-medium": {
         "key": "fa_IR-amir-medium",
         "name": "amir",
