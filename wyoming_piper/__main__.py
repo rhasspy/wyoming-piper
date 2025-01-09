@@ -67,7 +67,7 @@ async def main() -> None:
         help="Download latest voices.json during startup",
     )
     parser.add_argument(
-        "--cuda",
+        "--use-cuda",
         action="store_true",
         help="Use GPU"
     )
