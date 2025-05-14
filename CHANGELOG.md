@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.5.1
+## 1.5.3
 
 - Migrate to pyproject.toml
 - Update voices.json
