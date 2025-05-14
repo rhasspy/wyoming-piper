@@ -3,6 +3,7 @@
 ## 1.5.4
 
 - Merge downloaded voices.json on top of embedded
+- Use "main" instead of "v1.0.0" in HF URL
 
 ## 1.5.3
 

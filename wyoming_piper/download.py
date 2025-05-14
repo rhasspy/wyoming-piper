@@ -10,7 +10,7 @@ from urllib.request import urlopen
 
 from .file_hash import get_file_hash
 
-URL_FORMAT = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/{file}"
+URL_FORMAT = "https://huggingface.co/rhasspy/piper-voices/resolve/main/{file}"
 
 _DIR = Path(__file__).parent
 _LOGGER = logging.getLogger(__name__)
