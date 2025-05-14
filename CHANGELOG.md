@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.1
+
+- Migrate to pyproject.toml
+- Update voices.json
+
 ## 1.5.0
 
 - Send speakers in `info` message

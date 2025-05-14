@@ -23,10 +23,10 @@ subprocess.check_call(pip + ["install", "--upgrade", "pip"])
 subprocess.check_call(pip + ["install", "--upgrade", "setuptools", "wheel"])
 
 # Install requirements
-subprocess.check_call(pip + ["install", "-r", str(_PROGRAM_DIR / "requirements.txt")])
-
+extras = ""
 if args.dev:
-    # Install dev requirements
-    subprocess.check_call(
-        pip + ["install", "-r", str(_PROGRAM_DIR / "requirements_dev.txt")]
-    )
+    extras = "[dev]"
+
+subprocess.check_call(
+    pip + ["install", "-e", f"{_PROGRAM_DIR}{extras}"]
+)
