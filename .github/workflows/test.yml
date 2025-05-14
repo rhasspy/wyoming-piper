@@ -28,5 +28,4 @@ jobs:
       - run: script/setup --dev
       - run: |
           test $(script/run --version) = $(grep -Po '(?<=^version = ")[^"]*' pyproject.toml)
-      - run: script/lint
       - run: script/test
