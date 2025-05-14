@@ -47,20 +47,21 @@ def get_voices(
         except Exception:
             _LOGGER.exception("Failed to update voices list")
 
+    voices_embedded = _DIR / "voices.json"
+    _LOGGER.debug("Loading %s", voices_embedded)
+    with open(voices_embedded, "r", encoding="utf-8") as voices_file:
+        voices = json.load(voices_file)
+
     # Prefer downloaded file to embedded
     if voices_download.exists():
         try:
             _LOGGER.debug("Loading %s", voices_download)
             with open(voices_download, "r", encoding="utf-8") as voices_file:
-                return json.load(voices_file)
+                voices.update(json.load(voices_file))
         except Exception:
             _LOGGER.exception("Failed to load %s", voices_download)
 
-    # Fall back to embedded
-    voices_embedded = _DIR / "voices.json"
-    _LOGGER.debug("Loading %s", voices_embedded)
-    with open(voices_embedded, "r", encoding="utf-8") as voices_file:
-        return json.load(voices_file)
+    return voices
 
 
 def ensure_voice_exists(
