@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python_version: ["3.8", "3.9", "3.10", "3.11"]
+        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4.1.1
       - uses: actions/setup-python@v5
@@ -27,6 +27,6 @@ jobs:
           cache-dependency-path: requirements_dev.txt
       - run: script/setup --dev
       - run: |
-          test $(script/run --version) = $(cat wyoming_piper/VERSION)
+          test $(script/run --version) = $(grep -Po '(?<=^version = ")[^"]*' pyproject.toml)
       - run: script/lint
       - run: script/test
