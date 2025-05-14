@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.4
+
+- Merge downloaded voices.json on top of embedded
+
 ## 1.5.3
 
 - Migrate to pyproject.toml
