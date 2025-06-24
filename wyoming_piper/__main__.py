@@ -60,6 +60,11 @@ async def main() -> None:
         default=1,
         help="Maximum number of piper process to run simultaneously (default: 1)",
     )
+    parser.add_argument(
+        "--streaming",
+        action="store_true",
+        help="Enable audio streaming on sentence boundaries",
+    )
     #
     parser.add_argument(
         "--update-voices",
@@ -113,12 +118,14 @@ async def main() -> None:
                     voice_info.get("espeak", {}).get("voice", voice_name.split("_")[0]),
                 )
             ],
-            speakers=[
-                TtsVoiceSpeaker(name=speaker_name)
-                for speaker_name in voice_info["speaker_id_map"]
-            ]
-            if voice_info.get("speaker_id_map")
-            else None,
+            speakers=(
+                [
+                    TtsVoiceSpeaker(name=speaker_name)
+                    for speaker_name in voice_info["speaker_id_map"]
+                ]
+                if voice_info.get("speaker_id_map")
+                else None
+            ),
         )
         for voice_name, voice_info in voices_info.items()
         if not voice_info.get("_is_alias", False)
@@ -180,6 +187,7 @@ async def main() -> None:
                 installed=True,
                 voices=sorted(voices, key=lambda v: v.name),
                 version=__version__,
+                supports_synthesize_streaming=args.streaming,
             )
         ],
     )

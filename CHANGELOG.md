@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0
+
+- Add support for streaming audio on sentence boundaries (`--streaming`)
+
 ## 1.5.4
 
 - Merge downloaded voices.json on top of embedded

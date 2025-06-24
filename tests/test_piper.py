@@ -1,4 +1,5 @@
 """Tests for wyoming-piper"""
+
 import asyncio
 import sys
 import tarfile
