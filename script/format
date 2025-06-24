@@ -11,6 +11,11 @@ _TESTS_DIR = _PROGRAM_DIR / "tests"
 
 _FORMAT_DIRS = [_MODULE_DIR, _TESTS_DIR]
 
-context = venv.EnvBuilder().ensure_directories(_VENV_DIR)
-subprocess.check_call([context.env_exe, "-m", "black"] + _FORMAT_DIRS)
-subprocess.check_call([context.env_exe, "-m", "isort"] + _FORMAT_DIRS)
+if _VENV_DIR.exists():
+    context = venv.EnvBuilder().ensure_directories(_VENV_DIR)
+    python_exe = context.env_exe
+else:
+    python_exe = "python3"
+
+subprocess.check_call([python_exe, "-m", "black"] + _FORMAT_DIRS)
+subprocess.check_call([python_exe, "-m", "isort"] + _FORMAT_DIRS)
