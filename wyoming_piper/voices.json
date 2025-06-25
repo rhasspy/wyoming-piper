@@ -4013,6 +4013,36 @@
         },
         "aliases": []
     },
+    "es_AR-daniela-high": {
+        "key": "es_AR-daniela-high",
+        "name": "daniela",
+        "language": {
+            "code": "es_AR",
+            "family": "es",
+            "region": "AR",
+            "name_native": "Español",
+            "name_english": "Spanish",
+            "country_english": "Argentina"
+        },
+        "quality": "high",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "es/es_AR/daniela/high/es_AR-daniela-high.onnx": {
+                "size_bytes": 114199011,
+                "md5_digest": "e373fb657c93877dbc438badeadff4cb"
+            },
+            "es/es_AR/daniela/high/es_AR-daniela-high.onnx.json": {
+                "size_bytes": 7248,
+                "md5_digest": "b68d699a1779d98ee94c0cd9a08ba95b"
+            },
+            "es/es_AR/daniela/high/MODEL_CARD": {
+                "size_bytes": 353,
+                "md5_digest": "d940f7c6667a11ea165ff83ef7a86669"
+            }
+        },
+        "aliases": []
+    },
     "es_ES-carlfm-x_low": {
         "key": "es_ES-carlfm-x_low",
         "name": "carlfm",
@@ -4791,6 +4821,66 @@
         },
         "aliases": []
     },
+    "hi_IN-pratham-medium": {
+        "key": "hi_IN-pratham-medium",
+        "name": "pratham",
+        "language": {
+            "code": "hi_IN",
+            "family": "hi",
+            "region": "IN",
+            "name_native": "हिन्दी",
+            "name_english": "Hindi",
+            "country_english": "India"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "hi/hi_IN/pratham/medium/hi_IN-pratham-medium.onnx": {
+                "size_bytes": 63516050,
+                "md5_digest": "f1e5a629a9e533a7155910530109eb86"
+            },
+            "hi/hi_IN/pratham/medium/hi_IN-pratham-medium.onnx.json": {
+                "size_bytes": 4970,
+                "md5_digest": "ab655cdad90f1939f00d1b3aaf440e99"
+            },
+            "hi/hi_IN/pratham/medium/MODEL_CARD": {
+                "size_bytes": 304,
+                "md5_digest": "eccc77c3d857a883e85c52cb17653c1f"
+            }
+        },
+        "aliases": []
+    },
+    "hi_IN-priyamvada-medium": {
+        "key": "hi_IN-priyamvada-medium",
+        "name": "priyamvada",
+        "language": {
+            "code": "hi_IN",
+            "family": "hi",
+            "region": "IN",
+            "name_native": "हिन्दी",
+            "name_english": "Hindi",
+            "country_english": "India"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "hi/hi_IN/priyamvada/medium/hi_IN-priyamvada-medium.onnx": {
+                "size_bytes": 63516050,
+                "md5_digest": "7d5e20c2d1e72de8ed772f222e679626"
+            },
+            "hi/hi_IN/priyamvada/medium/hi_IN-priyamvada-medium.onnx.json": {
+                "size_bytes": 4973,
+                "md5_digest": "599ca4dc5d421a9c66692433f618e080"
+            },
+            "hi/hi_IN/priyamvada/medium/MODEL_CARD": {
+                "size_bytes": 307,
+                "md5_digest": "e2b745cf97087be0a97c7f10215bfa70"
+            }
+        },
+        "aliases": []
+    },
     "hu_HU-anna-medium": {
         "key": "hu_HU-anna-medium",
         "name": "anna",
@@ -5260,6 +5350,96 @@
             "lv/lv_LV/aivars/medium/MODEL_CARD": {
                 "size_bytes": 257,
                 "md5_digest": "171ee8dd94c40ee2faf96837086bd2a7"
+            }
+        },
+        "aliases": []
+    },
+    "ml_IN-arjun-medium": {
+        "key": "ml_IN-arjun-medium",
+        "name": "arjun",
+        "language": {
+            "code": "ml_IN",
+            "family": "ml",
+            "region": "IN",
+            "name_native": "മലയാളം",
+            "name_english": "Malayalam",
+            "country_english": "India"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "ml/ml_IN/arjun/medium/ml_IN-arjun-medium.onnx": {
+                "size_bytes": 62950044,
+                "md5_digest": "4f20109c108aa80f46df85ab9cda5daa"
+            },
+            "ml/ml_IN/arjun/medium/ml_IN-arjun-medium.onnx.json": {
+                "size_bytes": 5044,
+                "md5_digest": "18454efcad5bb889ee4cb1cb035993f5"
+            },
+            "ml/ml_IN/arjun/medium/MODEL_CARD": {
+                "size_bytes": 308,
+                "md5_digest": "eb0037396b93f38ffbc093dba42cf8be"
+            }
+        },
+        "aliases": []
+    },
+    "ml_IN-meera-medium": {
+        "key": "ml_IN-meera-medium",
+        "name": "meera",
+        "language": {
+            "code": "ml_IN",
+            "family": "ml",
+            "region": "IN",
+            "name_native": "മലയാളം",
+            "name_english": "Malayalam",
+            "country_english": "India"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "ml/ml_IN/meera/medium/ml_IN-meera-medium.onnx": {
+                "size_bytes": 62950044,
+                "md5_digest": "3eb7b05d25c1551f7a7cec1e1c153b1f"
+            },
+            "ml/ml_IN/meera/medium/ml_IN-meera-medium.onnx.json": {
+                "size_bytes": 5045,
+                "md5_digest": "64c2eee28c62e3a072ccc2ea3d812748"
+            },
+            "ml/ml_IN/meera/medium/MODEL_CARD": {
+                "size_bytes": 308,
+                "md5_digest": "626a0c1d744d0ce6ffca95665c526939"
+            }
+        },
+        "aliases": []
+    },
+    "ne_NP-chitwan-medium": {
+        "key": "ne_NP-chitwan-medium",
+        "name": "chitwan",
+        "language": {
+            "code": "ne_NP",
+            "family": "ne",
+            "region": "NP",
+            "name_native": "नेपाली",
+            "name_english": "Nepali",
+            "country_english": "Nepal"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "ne/ne_NP/chitwan/medium/ne_NP-chitwan-medium.onnx": {
+                "size_bytes": 62950044,
+                "md5_digest": "74cdb5b32816c366af74b55ed7494e25"
+            },
+            "ne/ne_NP/chitwan/medium/ne_NP-chitwan-medium.onnx.json": {
+                "size_bytes": 5043,
+                "md5_digest": "7ddc520e24a862016f6d22cde4b70ac1"
+            },
+            "ne/ne_NP/chitwan/medium/MODEL_CARD": {
+                "size_bytes": 275,
+                "md5_digest": "dcd35df097f84ace498d7afeb5b1a29c"
             }
         },
         "aliases": []
