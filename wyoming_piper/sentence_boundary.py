@@ -8,8 +8,10 @@ SENTENCE_END = r"[.!?…]|[。！？]|[؟]|[।॥]"
 ABBREVIATION_RE = re.compile(r"\b\p{L}{1,3}\.$", re.UNICODE)
 
 SENTENCE_BOUNDARY_RE = re.compile(
-    rf"(.*?(?:{SENTENCE_END}+))(?=\s+[\p{{Lu}}\p{{Lt}}\p{{Lo}}])", re.DOTALL
+    rf"(.*?(?:{SENTENCE_END}+))(?=\s+[\p{{Lu}}\p{{Lt}}\p{{Lo}}]|(?:\s+\d+\.\s+))",
+    re.DOTALL,
 )
+WORD_ASTERISKS = re.compile(r"\*+([^\*]+)\*+")
 
 
 class SentenceBoundaryDetector:
@@ -31,11 +33,11 @@ class SentenceBoundaryDetector:
             elif ABBREVIATION_RE.search(self.current_sentence[-5:]):
                 self.current_sentence += match_text
             else:
-                yield self.current_sentence.strip()
+                yield remove_asterisks(self.current_sentence.strip())
                 self.current_sentence = match_text
 
             if not ABBREVIATION_RE.search(self.current_sentence[-5:]):
-                yield self.current_sentence.strip()
+                yield remove_asterisks(self.current_sentence.strip())
                 self.current_sentence = ""
 
             self.remaining_text = self.remaining_text[match.end() :]
@@ -45,4 +47,9 @@ class SentenceBoundaryDetector:
         self.remaining_text = ""
         self.current_sentence = ""
 
-        return text
+        return remove_asterisks(text)
+
+
+def remove_asterisks(text: str) -> str:
+    """Remove *asterisks* surrounding **words**"""
+    return WORD_ASTERISKS.sub(r"\1", text)

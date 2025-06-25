@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.1
+
+- Split sentences on numbered lists and remove asterisks surrounding words
+
 ## 1.6.0
 
 - Add support for streaming audio on sentence boundaries (`--streaming`)

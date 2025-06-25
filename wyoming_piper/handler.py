@@ -22,7 +22,7 @@ from wyoming.tts import (
 )
 
 from .process import PiperProcessManager
-from .sentence_boundary import SentenceBoundaryDetector
+from .sentence_boundary import SentenceBoundaryDetector, remove_asterisks
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,6 +61,7 @@ class PiperEventHandler(AsyncEventHandler):
 
                 # Sent outside a stream, so we must process it
                 synthesize = Synthesize.from_event(event)
+                synthesize.text = remove_asterisks(synthesize.text)
                 return await self._handle_synthesize(synthesize)
 
             if not self.cli_args.streaming:
