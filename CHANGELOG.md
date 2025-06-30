@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.2
+
+- Remove asterisks at the start of a line (markdown list)
+
 ## 1.6.1
 
 - Split sentences on numbered lists and remove asterisks surrounding words

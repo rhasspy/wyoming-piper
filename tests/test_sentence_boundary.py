@@ -1,6 +1,6 @@
 """Tests for sentence boundary detection."""
 
-from wyoming_piper.sentence_boundary import SentenceBoundaryDetector
+from wyoming_piper.sentence_boundary import SentenceBoundaryDetector, remove_asterisks
 
 
 def test_one_chunk() -> None:
@@ -44,7 +44,7 @@ def test_numbered_lists() -> None:
     assert sbd.finish().startswith("Each character")
 
 
-def test_remove_asterisks() -> None:
+def test_remove_word_asterisks() -> None:
     sbd = SentenceBoundaryDetector()
     assert list(
         sbd.add_chunk(
@@ -52,3 +52,10 @@ def test_remove_asterisks() -> None:
         )
     ) == ["Test sentence with emphasized words!"]
     assert sbd.finish() == "Another *** sentence."
+
+
+def test_remove_line_asterisks() -> None:
+    assert (
+        remove_asterisks("* Test item 1.\n\n** Test item 2\n * Test item 3.")
+        == " Test item 1.\n\n Test item 2\n Test item 3."
+    )
