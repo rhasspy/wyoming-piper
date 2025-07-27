@@ -158,7 +158,7 @@ class PiperProcessManager:
                     *piper_args,
                     stdin=asyncio.subprocess.PIPE,
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.DEVNULL,
+                    stderr=asyncio.subprocess.PIPE,
                 ),
                 config=config,
                 wav_dir=wav_dir,
