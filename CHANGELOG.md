@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.3
+
+- Bump wyoming to 1.7.2 to fix error with event data
+
 ## 1.6.2
 
 - Remove asterisks at the start of a line (markdown list)
