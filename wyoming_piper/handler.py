@@ -160,8 +160,22 @@ class PiperEventHandler(AsyncEventHandler):
             )
             await piper_proc.proc.stdin.drain()
 
-            output_path = (await piper_proc.proc.stdout.readline()).decode().strip()
-            _LOGGER.debug(output_path)
+            stdout_line = await piper_proc.proc.stdout.readline()
+            output_path = stdout_line.decode().strip()
+
+            # Parse the "INFO:__main__:Wrote /path/to/file.wav" format from stderr from OHF piper-tts
+            if not output_path:
+                stderr_line = await piper_proc.proc.stderr.readline()
+                stderr_text = stderr_line.decode().strip()
+                _LOGGER.debug("Piper stderr: %s", stderr_text)
+                
+                if "Wrote " in stderr_text:
+                    output_path = stderr_text.split("Wrote ")[1].strip()
+                else:
+                    _LOGGER.error("Piper failed to generate audio file. Stdout: '%s', Stderr: '%s'", 
+                                stdout_line.decode().strip(), stderr_text)
+
+            _LOGGER.debug("Piper output path: %s", output_path)
 
         wav_file: wave.Wave_read = wave.open(output_path, "rb")
         with wav_file:
