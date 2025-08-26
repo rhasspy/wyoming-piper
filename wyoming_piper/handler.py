@@ -1,13 +1,15 @@
 """Event handler for clients of the server."""
 
 import argparse
-import json
+import asyncio
 import logging
 import math
-import os
+import tempfile
 import wave
 from typing import Any, Dict, Optional
 
+from piper import PiperVoice, SynthesisConfig
+from sentence_stream import SentenceBoundaryDetector
 from wyoming.audio import AudioChunk, AudioStart, AudioStop
 from wyoming.error import Error
 from wyoming.event import Event
@@ -21,10 +23,14 @@ from wyoming.tts import (
     SynthesizeStopped,
 )
 
-from .process import PiperProcessManager
-from .sentence_boundary import SentenceBoundaryDetector, remove_asterisks
+from .download import ensure_voice_exists, find_voice
 
 _LOGGER = logging.getLogger(__name__)
+
+# Keep the most recently used voice loaded
+_VOICE: Optional[PiperVoice] = None
+_VOICE_NAME: Optional[str] = None
+_VOICE_LOCK = asyncio.Lock()
 
 
 class PiperEventHandler(AsyncEventHandler):
@@ -32,7 +38,7 @@ class PiperEventHandler(AsyncEventHandler):
         self,
         wyoming_info: Info,
         cli_args: argparse.Namespace,
-        process_manager: PiperProcessManager,
+        voices_info: Dict[str, Any],
         *args,
         **kwargs,
     ) -> None:
@@ -40,9 +46,9 @@ class PiperEventHandler(AsyncEventHandler):
 
         self.cli_args = cli_args
         self.wyoming_info_event = wyoming_info.event()
-        self.process_manager = process_manager
-        self.sbd = SentenceBoundaryDetector()
+        self.voices_info = voices_info
         self.is_streaming: Optional[bool] = None
+        self.sbd = SentenceBoundaryDetector()
         self._synthesize: Optional[Synthesize] = None
 
     async def handle_event(self, event: Event) -> bool:
@@ -61,8 +67,27 @@ class PiperEventHandler(AsyncEventHandler):
 
                 # Sent outside a stream, so we must process it
                 synthesize = Synthesize.from_event(event)
-                synthesize.text = remove_asterisks(synthesize.text)
-                return await self._handle_synthesize(synthesize)
+                self._synthesize = Synthesize(text="", voice=synthesize.voice)
+                self.sbd = SentenceBoundaryDetector()
+                start_sent = False
+                for i, sentence in enumerate(self.sbd.add_chunk(synthesize.text)):
+                    self._synthesize.text = sentence
+                    await self._handle_synthesize(
+                        self._synthesize, send_start=(i == 0), send_stop=False
+                    )
+                    start_sent = True
+
+                self._synthesize.text = self.sbd.finish()
+                if self._synthesize.text:
+                    # Last sentence
+                    await self._handle_synthesize(
+                        self._synthesize, send_start=(not start_sent), send_stop=True
+                    )
+                else:
+                    # No final sentence
+                    await self.write_event(AudioStop().event())
+
+                return True
 
             if not self.cli_args.streaming:
                 # Streaming is not enabled
@@ -111,7 +136,11 @@ class PiperEventHandler(AsyncEventHandler):
             )
             raise err
 
-    async def _handle_synthesize(self, synthesize: Synthesize) -> bool:
+    async def _handle_synthesize(
+        self, synthesize: Synthesize, send_start: bool = True, send_stop: bool = True
+    ) -> bool:
+        global _VOICE, _VOICE_NAME
+
         _LOGGER.debug(synthesize)
 
         raw_text = synthesize.text
@@ -130,75 +159,117 @@ class PiperEventHandler(AsyncEventHandler):
             if not has_punctuation:
                 text = text + self.cli_args.auto_punctuation[0]
 
-        async with self.process_manager.processes_lock:
-            _LOGGER.debug("synthesize: raw_text=%s, text='%s'", raw_text, text)
-            voice_name: Optional[str] = None
-            voice_speaker: Optional[str] = None
-            if synthesize.voice is not None:
-                voice_name = synthesize.voice.name
-                voice_speaker = synthesize.voice.speaker
+        # Resolve voice
+        _LOGGER.debug("synthesize: raw_text=%s, text='%s'", raw_text, text)
+        voice_name: Optional[str] = None
+        voice_speaker: Optional[str] = None
+        if synthesize.voice is not None:
+            voice_name = synthesize.voice.name
+            voice_speaker = synthesize.voice.speaker
 
-            piper_proc = await self.process_manager.get_process(voice_name=voice_name)
+        if voice_name is None:
+            # Default voice
+            voice_name = self.cli_args.voice
 
-            assert piper_proc.proc.stdin is not None
-            assert piper_proc.proc.stdout is not None
+        if voice_name == self.cli_args.voice:
+            # Default speaker
+            voice_speaker = voice_speaker or self.cli_args.speaker
 
-            # JSON in, file path out
-            input_obj: Dict[str, Any] = {"text": text}
-            if voice_speaker is not None:
-                speaker_id = piper_proc.get_speaker_id(voice_speaker)
-                if speaker_id is not None:
-                    input_obj["speaker_id"] = speaker_id
-                else:
-                    _LOGGER.warning(
-                        "No speaker '%s' for voice '%s'", voice_speaker, voice_name
+        assert voice_name is not None
+
+        # Resolve alias
+        voice_info = self.voices_info.get(voice_name, {})
+        voice_name = voice_info.get("key", voice_name)
+        assert voice_name is not None
+
+        with tempfile.NamedTemporaryFile(mode="wb+", suffix=".wav") as output_file:
+            async with _VOICE_LOCK:
+                if voice_name != _VOICE_NAME:
+                    # Load new voice
+                    _LOGGER.debug("Loading voice: %s", _VOICE_NAME)
+                    ensure_voice_exists(
+                        voice_name,
+                        self.cli_args.data_dir,
+                        self.cli_args.download_dir,
+                        self.voices_info,
+                    )
+                    model_path, config_path = find_voice(
+                        voice_name, self.cli_args.data_dir
+                    )
+                    _VOICE = PiperVoice.load(
+                        model_path, config_path, use_cuda=self.cli_args.use_cuda
+                    )
+                    _VOICE_NAME = voice_name
+
+                assert _VOICE is not None
+
+                syn_config = SynthesisConfig()
+                if voice_speaker is not None:
+                    syn_config.speaker_id = _VOICE.config.speaker_id_map.get(
+                        voice_speaker
+                    )
+                    if syn_config.speaker_id is None:
+                        try:
+                            # Try to interpret as an id
+                            syn_config.speaker_id = int(voice_speaker)
+                        except ValueError:
+                            pass
+
+                    if syn_config.speaker_id is None:
+                        _LOGGER.warning(
+                            "No speaker '%s' for voice '%s'", voice_speaker, voice_name
+                        )
+
+                if self.cli_args.length_scale is not None:
+                    syn_config.length_scale = self.cli_args.length_scale
+
+                if self.cli_args.noise_scale is not None:
+                    syn_config.noise_scale = self.cli_args.noise_scale
+
+                if self.cli_args.noise_w_scale is not None:
+                    syn_config.noise_w_scale = self.cli_args.noise_w_scale
+
+                wav_writer: wave.Wave_write = wave.open(output_file, "wb")
+                with wav_writer:
+                    _VOICE.synthesize_wav(text, wav_writer, syn_config)
+
+            output_file.seek(0)
+
+            wav_file: wave.Wave_read = wave.open(output_file, "rb")
+            with wav_file:
+                rate = wav_file.getframerate()
+                width = wav_file.getsampwidth()
+                channels = wav_file.getnchannels()
+
+                if send_start:
+                    await self.write_event(
+                        AudioStart(
+                            rate=rate,
+                            width=width,
+                            channels=channels,
+                        ).event(),
                     )
 
-            _LOGGER.debug("input: %s", input_obj)
-            piper_proc.proc.stdin.write(
-                (json.dumps(input_obj, ensure_ascii=False) + "\n").encode()
-            )
-            await piper_proc.proc.stdin.drain()
+                # Audio
+                audio_bytes = wav_file.readframes(wav_file.getnframes())
+                bytes_per_sample = width * channels
+                bytes_per_chunk = bytes_per_sample * self.cli_args.samples_per_chunk
+                num_chunks = int(math.ceil(len(audio_bytes) / bytes_per_chunk))
 
-            output_path = (await piper_proc.proc.stdout.readline()).decode().strip()
-            _LOGGER.debug(output_path)
+                # Split into chunks
+                for i in range(num_chunks):
+                    offset = i * bytes_per_chunk
+                    chunk = audio_bytes[offset : offset + bytes_per_chunk]
+                    await self.write_event(
+                        AudioChunk(
+                            audio=chunk,
+                            rate=rate,
+                            width=width,
+                            channels=channels,
+                        ).event(),
+                    )
 
-        wav_file: wave.Wave_read = wave.open(output_path, "rb")
-        with wav_file:
-            rate = wav_file.getframerate()
-            width = wav_file.getsampwidth()
-            channels = wav_file.getnchannels()
-
-            await self.write_event(
-                AudioStart(
-                    rate=rate,
-                    width=width,
-                    channels=channels,
-                ).event(),
-            )
-
-            # Audio
-            audio_bytes = wav_file.readframes(wav_file.getnframes())
-            bytes_per_sample = width * channels
-            bytes_per_chunk = bytes_per_sample * self.cli_args.samples_per_chunk
-            num_chunks = int(math.ceil(len(audio_bytes) / bytes_per_chunk))
-
-            # Split into chunks
-            for i in range(num_chunks):
-                offset = i * bytes_per_chunk
-                chunk = audio_bytes[offset : offset + bytes_per_chunk]
-                await self.write_event(
-                    AudioChunk(
-                        audio=chunk,
-                        rate=rate,
-                        width=width,
-                        channels=channels,
-                    ).event(),
-                )
-
-        await self.write_event(AudioStop().event())
-        _LOGGER.debug("Completed request")
-
-        os.unlink(output_path)
+            if send_stop:
+                await self.write_event(AudioStop().event())
 
         return True
