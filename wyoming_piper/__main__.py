@@ -11,9 +11,8 @@ from wyoming.info import Attribution, Info, TtsProgram, TtsVoice, TtsVoiceSpeake
 from wyoming.server import AsyncServer
 
 from . import __version__
-from .download import find_voice, get_voices
+from .download import ensure_voice_exists, find_voice, get_voices
 from .handler import PiperEventHandler
-from .process import PiperProcessManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,11 +20,6 @@ _LOGGER = logging.getLogger(__name__)
 async def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--piper",
-        required=True,
-        help="Path to piper executable",
-    )
     parser.add_argument(
         "--voice",
         required=True,
@@ -48,18 +42,14 @@ async def main() -> None:
     )
     parser.add_argument("--noise-scale", type=float, help="Generator noise")
     parser.add_argument("--length-scale", type=float, help="Phoneme length")
-    parser.add_argument("--noise-w", type=float, help="Phoneme width noise")
+    parser.add_argument(
+        "--noise-w-scale", "--noise-w", type=float, help="Phoneme width noise"
+    )
     #
     parser.add_argument(
         "--auto-punctuation", default=".?!", help="Automatically add punctuation"
     )
     parser.add_argument("--samples-per-chunk", type=int, default=1024)
-    parser.add_argument(
-        "--max-piper-procs",
-        type=int,
-        default=1,
-        help="Maximum number of piper process to run simultaneously (default: 1)",
-    )
     parser.add_argument(
         "--streaming",
         action="store_true",
@@ -70,6 +60,12 @@ async def main() -> None:
         "--update-voices",
         action="store_true",
         help="Download latest voices.json during startup",
+    )
+    #
+    parser.add_argument(
+        "--use-cuda",
+        action="store_true",
+        help="Use CUDA if available (requires onnxruntime-gpu)",
     )
     #
     parser.add_argument("--debug", action="store_true", help="Log DEBUG messages")
@@ -192,11 +188,12 @@ async def main() -> None:
         ],
     )
 
-    process_manager = PiperProcessManager(args, voices_info)
+    # Ensure default voice is downloaded
+    voice_info = voices_info.get(args.voice, {})
+    voice_name = voice_info.get("key", args.voice)
+    assert voice_name is not None
 
-    # Make sure default voice is loaded.
-    # Other voices will be loaded on-demand.
-    await process_manager.get_process()
+    ensure_voice_exists(voice_name, args.data_dir, args.download_dir, voices_info)
 
     # Start server
     server = AsyncServer.from_uri(args.uri)
@@ -207,7 +204,7 @@ async def main() -> None:
             PiperEventHandler,
             wyoming_info,
             args,
-            process_manager,
+            voices_info,
         )
     )
 

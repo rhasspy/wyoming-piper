@@ -4821,6 +4821,36 @@
         },
         "aliases": []
     },
+    "he_IL-motek-medium": {
+        "key": "he_IL-motek-medium",
+        "name": "motek",
+        "language": {
+            "code": "he_IL",
+            "family": "he",
+            "region": "IL",
+            "name_native": "עברית",
+            "name_english": "Hebrew",
+            "country_english": "Israel"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "he/he_IL/motek/medium/he_IL-motek-medium.onnx": {
+                "size_bytes": 62950044,
+                "md5_digest": "a7462637b7e43bba0f28e1db93bc538e"
+            },
+            "he/he_IL/motek/medium/he_IL-motek-medium.onnx.json": {
+                "size_bytes": 5034,
+                "md5_digest": "3853c4e2a2e4b7beafac2525f385f226"
+            },
+            "he/he_IL/motek/medium/MODEL_CARD": {
+                "size_bytes": 290,
+                "md5_digest": "c2a5c0e238ae9d2a5aec7d212a44a4ce"
+            }
+        },
+        "aliases": []
+    },
     "hi_IN-pratham-medium": {
         "key": "hi_IN-pratham-medium",
         "name": "pratham",
@@ -4877,6 +4907,36 @@
             "hi/hi_IN/priyamvada/medium/MODEL_CARD": {
                 "size_bytes": 307,
                 "md5_digest": "e2b745cf97087be0a97c7f10215bfa70"
+            }
+        },
+        "aliases": []
+    },
+    "hi_IN-rohan-medium": {
+        "key": "hi_IN-rohan-medium",
+        "name": "rohan",
+        "language": {
+            "code": "hi_IN",
+            "family": "hi",
+            "region": "IN",
+            "name_native": "हिन्दी",
+            "name_english": "Hindi",
+            "country_english": "India"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "hi/hi_IN/rohan/medium/hi_IN-rohan-medium.onnx": {
+                "size_bytes": 62950044,
+                "md5_digest": "d63d31559a4ccce62be938ab252a4804"
+            },
+            "hi/hi_IN/rohan/medium/hi_IN-rohan-medium.onnx.json": {
+                "size_bytes": 5041,
+                "md5_digest": "b4aeeef53e2c469def82769aa4ce19eb"
+            },
+            "hi/hi_IN/rohan/medium/MODEL_CARD": {
+                "size_bytes": 359,
+                "md5_digest": "03084fa6c2367cf7d6aaba2a0bd79b71"
             }
         },
         "aliases": []
@@ -4967,6 +5027,36 @@
             "hu/hu_HU/imre/medium/MODEL_CARD": {
                 "size_bytes": 277,
                 "md5_digest": "3efe4f497211542985d2d52d403eecad"
+            }
+        },
+        "aliases": []
+    },
+    "id_ID-news_tts-medium": {
+        "key": "id_ID-news_tts-medium",
+        "name": "news_tts",
+        "language": {
+            "code": "id_ID",
+            "family": "id",
+            "region": "ID",
+            "name_native": "Bahasa Indonesia",
+            "name_english": "Indonesian",
+            "country_english": "Indonesia"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "id/id_ID/news_tts/medium/id_ID-news_tts-medium.onnx": {
+                "size_bytes": 62950044,
+                "md5_digest": "17de01db7ac654655436b6e509893c72"
+            },
+            "id/id_ID/news_tts/medium/id_ID-news_tts-medium.onnx.json": {
+                "size_bytes": 5050,
+                "md5_digest": "c023cfa031cc9ed4cf5dd8d2ef1e48ed"
+            },
+            "id/id_ID/news_tts/medium/MODEL_CARD": {
+                "size_bytes": 308,
+                "md5_digest": "eb0037396b93f38ffbc093dba42cf8be"
             }
         },
         "aliases": []
@@ -6516,6 +6606,96 @@
             "sw/sw_CD/lanfrica/medium/MODEL_CARD": {
                 "size_bytes": 315,
                 "md5_digest": "225cc22fc4a35a83f2039988499baa85"
+            }
+        },
+        "aliases": []
+    },
+    "te_IN-maya-medium": {
+        "key": "te_IN-maya-medium",
+        "name": "maya",
+        "language": {
+            "code": "te_IN",
+            "family": "te",
+            "region": "IN",
+            "name_native": "తెలుగు",
+            "name_english": "Telugu",
+            "country_english": "India"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "te/te_IN/maya/medium/te_IN-maya-medium.onnx": {
+                "size_bytes": 62950044,
+                "md5_digest": "604fa4083118495c0fff55826ffccefe"
+            },
+            "te/te_IN/maya/medium/te_IN-maya-medium.onnx.json": {
+                "size_bytes": 5040,
+                "md5_digest": "58a134cd3f762e9da9d6bdf72bf3d93c"
+            },
+            "te/te_IN/maya/medium/MODEL_CARD": {
+                "size_bytes": 318,
+                "md5_digest": "c01b34f46af0b9adc394ec01c1db618a"
+            }
+        },
+        "aliases": []
+    },
+    "te_IN-padmavathi-medium": {
+        "key": "te_IN-padmavathi-medium",
+        "name": "padmavathi",
+        "language": {
+            "code": "te_IN",
+            "family": "te",
+            "region": "IN",
+            "name_native": "తెలుగు",
+            "name_english": "Telugu",
+            "country_english": "India"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "te/te_IN/padmavathi/medium/te_IN-padmavathi-medium.onnx": {
+                "size_bytes": 63516050,
+                "md5_digest": "1a7fb140ecc8b5e8b3e80e460b719319"
+            },
+            "te/te_IN/padmavathi/medium/te_IN-padmavathi-medium.onnx.json": {
+                "size_bytes": 4974,
+                "md5_digest": "3f07441340aecc2a8b89987361e8078e"
+            },
+            "te/te_IN/padmavathi/medium/MODEL_CARD": {
+                "size_bytes": 278,
+                "md5_digest": "14ff83b180d87a5fbea40554c99f3b20"
+            }
+        },
+        "aliases": []
+    },
+    "te_IN-venkatesh-medium": {
+        "key": "te_IN-venkatesh-medium",
+        "name": "venkatesh",
+        "language": {
+            "code": "te_IN",
+            "family": "te",
+            "region": "IN",
+            "name_native": "తెలుగు",
+            "name_english": "Telugu",
+            "country_english": "India"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "te/te_IN/venkatesh/medium/te_IN-venkatesh-medium.onnx": {
+                "size_bytes": 63516050,
+                "md5_digest": "145092d2d110c4df0fa385dc606fe103"
+            },
+            "te/te_IN/venkatesh/medium/te_IN-venkatesh-medium.onnx.json": {
+                "size_bytes": 4973,
+                "md5_digest": "eaa45c58d43c518c7b2638058f6f1866"
+            },
+            "te/te_IN/venkatesh/medium/MODEL_CARD": {
+                "size_bytes": 277,
+                "md5_digest": "5cf7929a926db4a08d3934ff663f4e92"
             }
         },
         "aliases": []

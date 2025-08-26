@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0
+
+- Use [piper1-gpl](https://github.com/OHF-Voice/piper1-gpl/) library instead of piper binary
+- Use [sentence-stream](https://github.com/OHF-Voice/sentence-stream) library instead of internal code
+- Add `--use-cuda` to enable GPU acceleration (requires `onnxruntime-gpu`)
+- Remove `--piper` and `--max-piper-procs` (no longer needed)
+- Add alias `--noise-w-scale` for `--noise-w` to align with piper1-gpl
+- Ignore file sizes and hashes when downloading voices
+
 ## 1.6.3
 
 - Bump wyoming to 1.7.2 to fix error with event data

@@ -2,11 +2,9 @@
 
 import asyncio
 import sys
-import tarfile
 import wave
 from asyncio.subprocess import PIPE
 from pathlib import Path
-from urllib.request import urlopen
 
 import numpy as np
 import pytest
@@ -20,36 +18,17 @@ from .dtw import compute_optimal_path
 
 _DIR = Path(__file__).parent
 _LOCAL_DIR = _DIR.parent / "local"
-_PIPER_URL = (
-    "https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_amd64.tar.gz"
-)
 _TIMEOUT = 60
-
-
-def download_piper() -> None:
-    """Downloads a binary version of Piper."""
-    piper_path = _LOCAL_DIR / "piper"
-    if piper_path.exists():
-        return
-
-    _LOCAL_DIR.mkdir(parents=True, exist_ok=True)
-    with urlopen(_PIPER_URL) as response:
-        with tarfile.open(fileobj=response, mode="r|*") as piper_file:
-            piper_file.extractall(_LOCAL_DIR)
 
 
 @pytest.mark.asyncio
 async def test_piper() -> None:
-    download_piper()
-
     proc = await asyncio.create_subprocess_exec(
         sys.executable,
         "-m",
         "wyoming_piper",
         "--uri",
         "stdio://",
-        "--piper",
-        str(_LOCAL_DIR / "piper" / "piper"),
         "--voice",
         "en_US-ryan-low",
         "--data-dir",

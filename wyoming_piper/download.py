@@ -9,8 +9,6 @@ from urllib.error import URLError
 from urllib.parse import quote, urlsplit, urlunsplit
 from urllib.request import urlopen
 
-from .file_hash import get_file_hash
-
 URL_FORMAT = "https://huggingface.co/rhasspy/piper-voices/resolve/main/{file}"
 
 _DIR = Path(__file__).parent
@@ -89,8 +87,7 @@ def ensure_voice_exists(
     for data_dir in data_dirs:
         data_dir = Path(data_dir)
 
-        # Check sizes/hashes
-        for file_path, file_info in voice_files.items():
+        for file_path, _file_info in voice_files.items():
             if file_path in verified_files:
                 # Already verified this file in a different data directory
                 continue
@@ -101,34 +98,37 @@ def ensure_voice_exists(
 
             data_file_path = data_dir / file_name
             _LOGGER.debug("Checking %s", data_file_path)
-            if not data_file_path.exists():
+            if (not data_file_path.exists()) or (data_file_path.stat().st_size == 0):
                 _LOGGER.debug("Missing %s", data_file_path)
                 files_to_download.add(file_path)
                 continue
 
-            expected_size = file_info["size_bytes"]
-            actual_size = data_file_path.stat().st_size
-            if expected_size != actual_size:
-                _LOGGER.warning(
-                    "Wrong size (expected=%s, actual=%s) for %s",
-                    expected_size,
-                    actual_size,
-                    data_file_path,
-                )
-                files_to_download.add(file_path)
-                continue
+            # Don't bother validating sizes or hashes.
+            # This causes more problems than its worth.
+            #
+            # expected_size = file_info["size_bytes"]
+            # actual_size = data_file_path.stat().st_size
+            # if expected_size != actual_size:
+            #     _LOGGER.warning(
+            #         "Wrong size (expected=%s, actual=%s) for %s",
+            #         expected_size,
+            #         actual_size,
+            #         data_file_path,
+            #     )
+            #     files_to_download.add(file_path)
+            #     continue
 
-            expected_hash = file_info["md5_digest"]
-            actual_hash = get_file_hash(data_file_path)
-            if expected_hash != actual_hash:
-                _LOGGER.warning(
-                    "Wrong hash (expected=%s, actual=%s) for %s",
-                    expected_hash,
-                    actual_hash,
-                    data_file_path,
-                )
-                files_to_download.add(file_path)
-                continue
+            # expected_hash = file_info["md5_digest"]
+            # actual_hash = get_file_hash(data_file_path)
+            # if expected_hash != actual_hash:
+            #     _LOGGER.warning(
+            #         "Wrong hash (expected=%s, actual=%s) for %s",
+            #         expected_hash,
+            #         actual_hash,
+            #         data_file_path,
+            #     )
+            #     files_to_download.add(file_path)
+            #     continue
 
             # File exists and has been verified
             verified_files.add(file_path)
