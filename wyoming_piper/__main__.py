@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, Set
 
 from wyoming.info import Attribution, Info, TtsProgram, TtsVoice, TtsVoiceSpeaker
-from wyoming.server import AsyncServer
+from wyoming.server import AsyncServer, AsyncTcpServer
 
 from . import __version__
 from .download import ensure_voice_exists, find_voice, get_voices
@@ -26,6 +26,14 @@ async def main() -> None:
         help="Default Piper voice to use (e.g., en_US-lessac-medium)",
     )
     parser.add_argument("--uri", default="stdio://", help="unix:// or tcp://")
+    #
+    parser.add_argument(
+        "--zeroconf",
+        nargs="?",
+        const="piper",
+        help="Enable discovery over zeroconf with optional name (default: piper)",
+    )
+    #
     parser.add_argument(
         "--data-dir",
         required=True,
@@ -197,6 +205,19 @@ async def main() -> None:
 
     # Start server
     server = AsyncServer.from_uri(args.uri)
+
+    if args.zeroconf:
+        if not isinstance(server, AsyncTcpServer):
+            raise ValueError("Zeroconf requires tcp:// uri")
+
+        from wyoming.zeroconf import HomeAssistantZeroconf
+
+        tcp_server: AsyncTcpServer = server
+        hass_zeroconf = HomeAssistantZeroconf(
+            name=args.zeroconf, port=tcp_server.port, host=tcp_server.host
+        )
+        await hass_zeroconf.register_server()
+        _LOGGER.debug("Zeroconf discovery enabled")
 
     _LOGGER.info("Ready")
     await server.run(

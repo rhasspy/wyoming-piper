@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0
+
+Add `--zeroconf` option for discovery
+
 ## 2.0.0
 
 - Use [piper1-gpl](https://github.com/OHF-Voice/piper1-gpl/) library instead of piper binary
