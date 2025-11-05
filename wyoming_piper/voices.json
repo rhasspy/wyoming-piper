@@ -59,6 +59,36 @@
         },
         "aliases": []
     },
+    "bg_BG-dimitar-medium": {
+        "key": "bg_BG-dimitar-medium",
+        "name": "dimitar",
+        "language": {
+            "code": "bg_BG",
+            "family": "bg",
+            "region": "BG",
+            "name_native": "български",
+            "name_english": "Bulgarian",
+            "country_english": "Bulgaria"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "bg/bg_BG/dimitar/medium/bg_BG-dimitar-medium.onnx": {
+                "size_bytes": 63221984,
+                "md5_digest": "fc1ce62a4f04f089e22b8c3a13bde28a"
+            },
+            "bg/bg_BG/dimitar/medium/bg_BG-dimitar-medium.onnx.json": {
+                "size_bytes": 5123,
+                "md5_digest": "5fb4aa5e5b20d4ed515d40f0b4ce16f0"
+            },
+            "bg/bg_BG/dimitar/medium/MODEL_CARD": {
+                "size_bytes": 282,
+                "md5_digest": "6056805758b0136214309e799209d9c9"
+            }
+        },
+        "aliases": []
+    },
     "ca_ES-upc_ona-medium": {
         "key": "ca_ES-upc_ona-medium",
         "name": "upc_ona",
@@ -897,6 +927,36 @@
             "el/el_GR/rapunzelina/low/MODEL_CARD": {
                 "size_bytes": 303,
                 "md5_digest": "c75270b41e7bf60dacd351753a483574"
+            }
+        },
+        "aliases": []
+    },
+    "el_GR-rapunzelina-medium": {
+        "key": "el_GR-rapunzelina-medium",
+        "name": "rapunzelina",
+        "language": {
+            "code": "el_GR",
+            "family": "el",
+            "region": "GR",
+            "name_native": "Ελληνικά",
+            "name_english": "Greek",
+            "country_english": "Greece"
+        },
+        "quality": "medium",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "el/el_GR/rapunzelina/medium/el_GR-rapunzelina-medium.onnx": {
+                "size_bytes": 62950044,
+                "md5_digest": "265f2f9be00aa5ce81abc1f022145e42"
+            },
+            "el/el_GR/rapunzelina/medium/el_GR-rapunzelina-medium.onnx.json": {
+                "size_bytes": 4973,
+                "md5_digest": "ba83ba13667e14e2f97fbc9d950f9583"
+            },
+            "el/el_GR/rapunzelina/medium/MODEL_CARD": {
+                "size_bytes": 276,
+                "md5_digest": "8a9392d82c8a5631bad7d12fc4aa66a7"
             }
         },
         "aliases": []
@@ -4838,11 +4898,11 @@
         "files": {
             "he/he_IL/motek/medium/he_IL-motek-medium.onnx": {
                 "size_bytes": 62950044,
-                "md5_digest": "a7462637b7e43bba0f28e1db93bc538e"
+                "md5_digest": "b1c8ac594b3627149d043ebf0f5cc905"
             },
             "he/he_IL/motek/medium/he_IL-motek-medium.onnx.json": {
-                "size_bytes": 5034,
-                "md5_digest": "3853c4e2a2e4b7beafac2525f385f226"
+                "size_bytes": 5108,
+                "md5_digest": "302a1caaad72b62b4dee04548cd19642"
             },
             "he/he_IL/motek/medium/MODEL_CARD": {
                 "size_bytes": 290,

@@ -1,0 +1,5 @@
+*
+!wyoming_piper/*.py
+!wyoming_piper/voices.json
+!pyproject.toml
+!docker_run.sh

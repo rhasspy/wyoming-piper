@@ -22,11 +22,13 @@ pip = [context.env_exe, "-m", "pip"]
 subprocess.check_call(pip + ["install", "--upgrade", "pip"])
 subprocess.check_call(pip + ["install", "--upgrade", "setuptools", "wheel"])
 
-# Install requirements
-extras = ""
+extras = []
 if args.dev:
-    extras = "[dev]"
+    extras.append("dev")
 
-subprocess.check_call(
-    pip + ["install", "-e", f"{_PROGRAM_DIR}{extras}"]
-)
+extras_str = ""
+if extras:
+    extras_str = "[" + ",".join(extras) + "]"
+
+# Install requirements
+subprocess.check_call(pip + ["install", "-e", f"{_PROGRAM_DIR}{extras_str}"])
