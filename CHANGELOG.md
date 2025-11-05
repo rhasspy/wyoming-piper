@@ -5,9 +5,11 @@
 - Use [piper1-gpl](https://github.com/OHF-Voice/piper1-gpl/) library instead of piper binary
 - Use [sentence-stream](https://github.com/OHF-Voice/sentence-stream) library instead of internal code
 - Add `--use-cuda` to enable GPU acceleration (requires `onnxruntime-gpu`)
+- Ignore file sizes and hashes when downloading voices
+- Add Docker build here
+- Add publish workflow
 - Remove `--piper` and `--max-piper-procs` (no longer needed)
 - Add alias `--noise-w-scale` for `--noise-w` to align with piper1-gpl
-- Ignore file sizes and hashes when downloading voices
 
 ## 1.6.3
 

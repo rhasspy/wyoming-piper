@@ -6,10 +6,8 @@ from pathlib import Path
 _DIR = Path(__file__).parent
 _PROGRAM_DIR = _DIR.parent
 _VENV_DIR = _PROGRAM_DIR / ".venv"
-_MODULE_DIR = _PROGRAM_DIR / "wyoming_piper"
-_TESTS_DIR = _PROGRAM_DIR / "tests"
-
-_FORMAT_DIRS = [_MODULE_DIR, _TESTS_DIR]
+_MODULE = _PROGRAM_DIR.name.replace("-", "_")
+_MODULE_DIR = _PROGRAM_DIR / _MODULE
 
 if _VENV_DIR.exists():
     context = venv.EnvBuilder().ensure_directories(_VENV_DIR)
@@ -17,5 +15,5 @@ if _VENV_DIR.exists():
 else:
     python_exe = "python3"
 
-subprocess.check_call([python_exe, "-m", "black"] + _FORMAT_DIRS)
-subprocess.check_call([python_exe, "-m", "isort"] + _FORMAT_DIRS)
+subprocess.check_call([python_exe, "-m", "black", str(_MODULE_DIR)])
+subprocess.check_call([python_exe, "-m", "isort", str(_MODULE_DIR)])

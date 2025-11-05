@@ -151,9 +151,10 @@ def ensure_voice_exists(
             download_file_path.parent.mkdir(parents=True, exist_ok=True)
 
             _LOGGER.debug("Downloading %s to %s", file_url, download_file_path)
-            with urlopen(_quote_url(file_url)) as response, open(
-                download_file_path, "wb"
-            ) as download_file:
+            with (
+                urlopen(_quote_url(file_url)) as response,
+                open(download_file_path, "wb") as download_file,
+            ):
                 shutil.copyfileobj(response, download_file)
 
             _LOGGER.info("Downloaded %s (%s)", download_file_path, file_url)

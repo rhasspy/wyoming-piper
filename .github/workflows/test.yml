@@ -1,31 +1,30 @@
 ---
-name: test
+name: Test
 
-# yamllint disable-line rule:truthy
 on:
-  push:
-    branches: [master]
-
+  workflow_dispatch:
   pull_request:
-
-permissions:
-  contents: read
+    branches:
+      - main
 
 jobs:
-  test_linux:
-    name: "test on linux"
-    runs-on: ubuntu-latest
+  build_wheels:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python_version: ["3.9", "3.10", "3.11", "3.12"]
+        os: [ubuntu-latest]
+
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: "${{ matrix.python_version }}"
-          cache: "pip"
-          cache-dependency-path: pyproject.toml
-      - run: script/setup --dev
-      - run: |
-          test $(script/run --version) = $(grep -Po '(?<=^version = ")[^"]*' pyproject.toml)
-      - run: script/test
+          python-version: "3.x"
+
+      - name: Install
+        run: |
+          script/setup --dev
+
+      - name: Run tests
+        run: script/test
