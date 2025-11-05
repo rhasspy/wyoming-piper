@@ -89,7 +89,7 @@ class PiperEventHandler(AsyncEventHandler):
 
                 return True
 
-            if not self.cli_args.streaming:
+            if self.cli_args.no_streaming:
                 # Streaming is not enabled
                 return True
 

@@ -1,6 +1,6 @@
 [project]
 name = "wyoming-piper"
-version = "2.1.0"
+version = "2.1.1"
 description = "Wyoming Server for Piper"
 readme = "README.md"
 requires-python = ">=3.9"

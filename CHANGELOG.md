@@ -1,8 +1,12 @@
 # Changelog
 
+## 2.1.1
+
+- Fix issue with streaming
+
 ## 2.1.0
 
-Add `--zeroconf` option for discovery
+- Add `--zeroconf` option for discovery
 
 ## 2.0.0
 
