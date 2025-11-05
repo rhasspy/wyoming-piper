@@ -51,9 +51,9 @@ async def main() -> None:
     )
     parser.add_argument("--samples-per-chunk", type=int, default=1024)
     parser.add_argument(
-        "--streaming",
+        "--no-streaming",
         action="store_true",
-        help="Enable audio streaming on sentence boundaries",
+        help="Disable audio streaming on sentence boundaries",
     )
     #
     parser.add_argument(
@@ -183,7 +183,7 @@ async def main() -> None:
                 installed=True,
                 voices=sorted(voices, key=lambda v: v.name),
                 version=__version__,
-                supports_synthesize_streaming=args.streaming,
+                supports_synthesize_streaming=(not args.no_streaming),
             )
         ],
     )
