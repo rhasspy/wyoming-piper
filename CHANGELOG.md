@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.2
+
+- Add `--data-dir /data` to Docker run script
+
 ## 2.1.1
 
 - Fix issue with streaming

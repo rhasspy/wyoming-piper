@@ -57,6 +57,19 @@ jobs:
 
           print(f"Version OK: tag={tag} matches pyproject.toml={ver}")
 
+      - name: Build wheel
+        run: |
+          python -m build --wheel --sdist
+
+      - name: Upload wheels and sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-piper
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+          if-no-files-found: error
+
       # Enables building foreign architectures (e.g., arm64 on amd64 runner)
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -149,6 +162,26 @@ jobs:
         with:
           name: release-notes
           path: RELEASE_NOTES.md
+
+  publish:
+    needs: [build, changelog]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write # required for PyPI Trusted Publishing (OIDC)
+      contents: read
+    steps:
+      - name: Download all dists
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dist-*
+          merge-multiple: true
+          path: dist
+
+      - name: Publish to PyPI via OIDC
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true
 
   github_release:
     needs: [build, changelog]
