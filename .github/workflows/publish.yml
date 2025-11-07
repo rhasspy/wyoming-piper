@@ -21,7 +21,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install build tools
-        run: pip install tomli
+        run: pip install tomli setuptools wheel build
 
       - name: Read version from pyproject.toml & verify tag
         id: read_ver
