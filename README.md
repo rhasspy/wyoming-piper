@@ -66,7 +66,9 @@ __Important__: Keys are preprocessed the same way as the text to be synthetised,
 Use the same parameters and mount the static sentences dir as a volume.
 
 ### HomeAssistant
-HomeAssistant caches TTS output audios. If you've used Assist previously, make sure you delete files in the audio cache folder: _path/to/homeassistant/config/tts_ .
+HomeAssistant caches TTS output audios. If you've used Assist previously, make sure you clear TTS cache via _Developer Tools_:
+
+![Clear TTS cache](assets/ha_clear_tts_cache.png)
 
 ### Example static-sentences.json
 Suppose you have the following folder structure:
