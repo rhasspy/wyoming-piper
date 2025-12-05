@@ -7,6 +7,8 @@ import math
 import tempfile
 import wave
 from typing import Any, Dict, Optional
+from os.path import join
+from json import load
 
 from piper import PiperVoice, SynthesisConfig
 from sentence_stream import SentenceBoundaryDetector
@@ -22,6 +24,7 @@ from wyoming.tts import (
     SynthesizeStop,
     SynthesizeStopped,
 )
+import string
 
 from .download import ensure_voice_exists, find_voice
 
@@ -31,6 +34,20 @@ _LOGGER = logging.getLogger(__name__)
 _VOICE: Optional[PiperVoice] = None
 _VOICE_NAME: Optional[str] = None
 _VOICE_LOCK = asyncio.Lock()
+
+
+def preprocess_text(text: str) -> str:
+    """
+    Preprocesses the input text by removing leading and trailing spaces and punctuation and making it lowercase.
+
+    Args:
+        text (str): the text to be preprocessed.
+
+    Returns:
+        str: the lowecase preprocessed text without leading and trailing spaces and punctuation.
+    """
+    punctuation_remover = str.maketrans('', '', string.punctuation)
+    return text.strip().lower().translate(punctuation_remover)
 
 
 class PiperEventHandler(AsyncEventHandler):
@@ -50,8 +67,21 @@ class PiperEventHandler(AsyncEventHandler):
         self.is_streaming: Optional[bool] = None
         self.sbd = SentenceBoundaryDetector()
         self._synthesize: Optional[Synthesize] = None
+        self.static_sentences_mapping = {}
+        # load static sentences
+        if self.cli_args.use_static_sentences:
+            with open(join(self.cli_args.static_sentences_dir, 'static-sentences.json')) as static_sentences_file:
+                static_sentences_mapping_raw = load(static_sentences_file)
+                for k_raw, v_raw in static_sentences_mapping_raw.items():
+                    k = preprocess_text(k_raw)
+                    v = v_raw
+                    if not v.startswith(self.cli_args.static_sentences_dir):
+                        v = join(self.cli_args.static_sentences_dir, v)
+                    self.static_sentences_mapping[k] = v
+                    _LOGGER.debug(f"Parsed static sentence: {dict(sentence=k, path=v)}")
 
     async def handle_event(self, event: Event) -> bool:
+
         if Describe.is_type(event.type):
             await self.write_event(self.wyoming_info_event)
             _LOGGER.debug("Sent info")
@@ -136,6 +166,51 @@ class PiperEventHandler(AsyncEventHandler):
             )
             raise err
 
+    async def _handle_static_sentence(
+        self, static_sentence_text: str
+    ) -> None:
+        global _VOICE, _VOICE_NAME
+
+        _LOGGER.debug(f"Got static sentence: `{static_sentence_text}`")
+        static_sentence_audio_file_path = self.static_sentences_mapping[static_sentence_text]
+
+        with open(static_sentence_audio_file_path, mode="rb") as static_sentence_audio_file:
+            wav_file: wave.Wave_read = wave.open(static_sentence_audio_file, "rb")
+
+            with wav_file:
+                rate = wav_file.getframerate()
+                width = wav_file.getsampwidth()
+                channels = wav_file.getnchannels()
+
+                await self.write_event(
+                    AudioStart(
+                        rate=rate,
+                        width=width,
+                        channels=channels,
+                    ).event(),
+                )
+
+                # Audio
+                audio_bytes = wav_file.readframes(wav_file.getnframes())
+                bytes_per_sample = width * channels
+                bytes_per_chunk = bytes_per_sample * self.cli_args.samples_per_chunk
+                num_chunks = int(math.ceil(len(audio_bytes) / bytes_per_chunk))
+
+                # Split into chunks
+                for i in range(num_chunks):
+                    offset = i * bytes_per_chunk
+                    chunk = audio_bytes[offset : offset + bytes_per_chunk]
+                    await self.write_event(
+                        AudioChunk(
+                            audio=chunk,
+                            rate=rate,
+                            width=width,
+                            channels=channels,
+                        ).event(),
+                    )
+
+            await self.write_event(AudioStop().event())
+
     async def _handle_synthesize(
         self, synthesize: Synthesize, send_start: bool = True, send_stop: bool = True
     ) -> bool:
@@ -158,6 +233,12 @@ class PiperEventHandler(AsyncEventHandler):
 
             if not has_punctuation:
                 text = text + self.cli_args.auto_punctuation[0]
+
+        # Handle static sentence detection
+        preprocessed_text = preprocess_text(raw_text)
+        if preprocessed_text in self.static_sentences_mapping:
+            await self._handle_static_sentence(preprocessed_text)
+            return True
 
         # Resolve voice
         _LOGGER.debug("synthesize: raw_text=%s, text='%s'", raw_text, text)
