@@ -65,6 +65,9 @@ __Important__: Keys are preprocessed the same way as the text to be synthetised,
 ### Docker
 Use the same parameters and mount the static sentences dir as a volume.
 
+### HomeAssistant
+HomeAssistant caches TTS output audios. If you've used Assist previously, make sure you delete files in the audio cache folder: _path/to/homeassistant/config/tts_ .
+
 ### Example static-sentences.json
 Suppose you have the following folder structure:
 
