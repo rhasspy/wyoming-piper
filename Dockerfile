@@ -12,7 +12,6 @@ RUN \
         python3 \
         python3-pip \
         python3-venv \
-        wget \
     \
     && python3 -m venv .venv \
     && .venv/bin/pip3 install --no-cache-dir -U \
@@ -23,8 +22,6 @@ RUN \
         --extra-index-url https://download.pytorch.org/whl/cpu \
         -e '.[zeroconf,zh]' \
     \
-    && mkdir -p ./g2pW \
-    && wget -qO- 'https://huggingface.co/datasets/rhasspy/piper-checkpoints/resolve/main/zh/zh_CN/_resources/g2pw.tar.gz?download=true' | tar -xz -C ./g2pW \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./ ./

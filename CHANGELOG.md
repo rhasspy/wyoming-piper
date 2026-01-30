@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.1
+
+- Fix `zeroconf` dependency
+- Don't download `g2pW` model into Docker container
+
 ## 2.2.0
 
 - Bump `piper-tts` to 1.4.0
