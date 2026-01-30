@@ -55,7 +55,9 @@ async def main() -> None:
     )
     #
     parser.add_argument(
-        "--auto-punctuation", default=".?!", help="Automatically add punctuation"
+        "--auto-punctuation",
+        default=".?!。？！．؟",
+        help="Automatically add punctuation",
     )
     parser.add_argument("--samples-per-chunk", type=int, default=1024)
     parser.add_argument(

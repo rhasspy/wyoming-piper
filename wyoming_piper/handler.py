@@ -260,6 +260,7 @@ class PiperEventHandler(AsyncEventHandler):
                 for i in range(num_chunks):
                     offset = i * bytes_per_chunk
                     chunk = audio_bytes[offset : offset + bytes_per_chunk]
+
                     await self.write_event(
                         AudioChunk(
                             audio=chunk,

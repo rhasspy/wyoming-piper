@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+- Bump `piper-tts` to 1.4.0
+- Add `zh` optional dependencies for new Chinese voices
+- Add `zeroconf` optional dependencies
+
 ## 2.1.2
 
 - Add `--data-dir /data` to Docker run script
