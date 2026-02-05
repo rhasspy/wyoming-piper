@@ -5,6 +5,7 @@ import json
 import logging
 from functools import partial
 from pathlib import Path
+import signal
 from typing import Any, Dict, Set
 
 from wyoming.info import Attribution, Info, TtsProgram, TtsVoice, TtsVoiceSpeaker
@@ -222,14 +223,24 @@ async def main() -> None:
         _LOGGER.debug("Zeroconf discovery enabled")
 
     _LOGGER.info("Ready")
-    await server.run(
-        partial(
-            PiperEventHandler,
-            wyoming_info,
-            args,
-            voices_info,
+    server_task = asyncio.create_task(
+        server.run(
+            partial(
+                PiperEventHandler,
+                wyoming_info,
+                args,
+                voices_info,
+            )
         )
     )
+    loop = asyncio.get_event_loop()
+    loop.add_signal_handler(signal.SIGINT, server_task.cancel)
+    loop.add_signal_handler(signal.SIGTERM, server_task.cancel)
+
+    try:
+        await server_task
+    except asyncio.CancelledError:
+        _LOGGER.info("Server stopped")
 
 
 # -----------------------------------------------------------------------------
