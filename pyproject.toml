@@ -1,6 +1,6 @@
 [project]
 name = "wyoming-piper"
-version = "2.2.1"
+version = "2.2.2"
 description = "Wyoming Server for Piper"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -22,7 +22,7 @@ classifiers = [
 dependencies = [
     "wyoming>=1.8,<2",
     "regex>=2024.11.6",
-    "piper-tts>=1.4.0,<2",
+    "piper-tts>=1.4.1,<2",
     "sentence-stream>=1.2.0,<2",
 ]
 

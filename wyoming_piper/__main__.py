@@ -233,7 +233,7 @@ async def main() -> None:
             )
         )
     )
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     loop.add_signal_handler(signal.SIGINT, server_task.cancel)
     loop.add_signal_handler(signal.SIGTERM, server_task.cancel)
 
