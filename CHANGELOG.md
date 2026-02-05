@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.2
+
+- Bump `piper-tts` to 1.4.1 (wheel fix)
+
 ## 2.2.1
 
 - Fix `zeroconf` dependency
