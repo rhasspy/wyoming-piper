@@ -20,7 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "wyoming>=1.8,<2",
+    "wyoming[zeroconf]>=1.8,<2",
     "regex>=2024.11.6",
     "piper-tts>=1.4.1,<2",
     "sentence-stream>=1.2.0,<2",
