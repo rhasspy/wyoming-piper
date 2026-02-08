@@ -79,6 +79,17 @@ async def main() -> None:
         help="Use CUDA if available (requires onnxruntime-gpu)",
     )
     #
+    parser.add_argument(
+        "--static-sentences-dir",
+        help="Use static sentences from pre-computed WAV files (does not prevent Piper from being used for esogenous sentences)",
+    )
+    #
+    parser.add_argument(
+        "--use-static-sentences",
+        action="store_true",
+        help="Use static sentences from pre-computed WAV files (does not prevent Piper from being used for esogenous sentences)",
+    )
+    #
     parser.add_argument("--debug", action="store_true", help="Log DEBUG messages")
     parser.add_argument(
         "--log-format", default=logging.BASIC_FORMAT, help="Format for log messages"
