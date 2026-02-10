@@ -230,6 +230,10 @@ class PiperEventHandler(AsyncEventHandler):
                     syn_config.noise_w_scale = self.cli_args.noise_w_scale
 
                 wav_writer: wave.Wave_write = wave.open(output_file, "wb")
+                # Set required WAV parameters before writing
+                wav_writer.setnchannels(1)  # Mono audio
+                wav_writer.setsampwidth(2)  # 16-bit audio (2 bytes)
+                wav_writer.setframerate(16000)  # 16 kHz sample rate
                 with wav_writer:
                     _VOICE.synthesize_wav(text, wav_writer, syn_config)
 
