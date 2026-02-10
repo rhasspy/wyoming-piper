@@ -3,9 +3,9 @@ import argparse
 import asyncio
 import json
 import logging
+import signal
 from functools import partial
 from pathlib import Path
-import signal
 from typing import Any, Dict, Set
 
 from wyoming.info import Attribution, Info, TtsProgram, TtsVoice, TtsVoiceSpeaker
@@ -53,6 +53,11 @@ async def main() -> None:
     parser.add_argument("--length-scale", type=float, help="Phoneme length")
     parser.add_argument(
         "--noise-w-scale", "--noise-w", type=float, help="Phoneme width noise"
+    )
+    parser.add_argument(
+        "--sentence-silence",
+        type=float,
+        help="Seconds of silence to add after each sentence",
     )
     #
     parser.add_argument(
