@@ -18,16 +18,25 @@ cd wyoming-piper
 script/setup
 ```
 
-Install Piper
-```sh
-curl -L -s "https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_amd64.tar.gz" | tar -zxvf - -C /usr/share
-```
-
-Run a server that anyone can connect to:
+Run a Wyoming server that Home Assistant can connect to:
 
 ``` sh
-script/run --piper '/usr/share/piper/piper' --voice en_US-lessac-medium --uri 'tcp://0.0.0.0:10200' --data-dir /data --download-dir /data 
+script/run --voice en_US-lessac-medium --uri 'tcp://0.0.0.0:10200' --data-dir /data --download-dir /data 
 ```
+
+For a demo web server, make sure to install the `http` dependencies first:
+
+``` sh
+script/setup --http
+```
+
+Then run in a separate terminal:
+
+``` sh
+script/run_http --uri 'tcp://localhost:10200'
+```
+
+and visit http://localhost:5000 to test.
 
 ## Docker Image
 
