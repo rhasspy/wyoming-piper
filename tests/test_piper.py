@@ -42,6 +42,12 @@ async def test_piper() -> None:
         "en_US-ryan-low",
         "--data-dir",
         str(_LOCAL_DIR),
+        # Disable stochastic duration/audio variation so repeated runs
+        # produce comparable output against the golden fixture.
+        "--noise-scale",
+        "0",
+        "--noise-w-scale",
+        "0",
         stdin=PIPE,
         stdout=PIPE,
     )
