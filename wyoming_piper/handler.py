@@ -233,6 +233,18 @@ class PiperEventHandler(AsyncEventHandler):
                 with wav_writer:
                     _VOICE.synthesize_wav(text, wav_writer, syn_config)
 
+                    if self.cli_args.sentence_silence is not None and not send_stop:
+                        # 16-bit samples for silence
+                        wav_writer.writeframes(
+                            bytes(
+                                int(
+                                    _VOICE.config.sample_rate
+                                    * self.cli_args.sentence_silence
+                                    * 2
+                                )
+                            )
+                        )
+
             output_file.seek(0)
 
             wav_file: wave.Wave_read = wave.open(output_file, "rb")

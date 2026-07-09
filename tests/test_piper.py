@@ -19,6 +19,7 @@ from .dtw import compute_optimal_path
 _DIR = Path(__file__).parent
 _LOCAL_DIR = _DIR.parent / "local"
 _TIMEOUT = 60
+_REBASELINE = False
 
 
 @pytest.mark.asyncio
@@ -33,6 +34,8 @@ async def test_piper() -> None:
         "en_US-ryan-low",
         "--data-dir",
         str(_LOCAL_DIR),
+        "--sentence-silence",
+        "0.5",
         stdin=PIPE,
         stdout=PIPE,
     )
@@ -58,7 +61,7 @@ async def test_piper() -> None:
 
     # Synthesize text
     await async_write_event(
-        Synthesize("This is a test.", voice=SynthesizeVoice("en_US-ryan-low")).event(),
+        Synthesize("This is a test. This is sentence two.", voice=SynthesizeVoice("en_US-ryan-low")).event(),
         proc.stdin,
     )
 
@@ -66,13 +69,6 @@ async def test_piper() -> None:
     assert event is not None
     assert AudioStart.is_type(event.type)
     audio_start = AudioStart.from_event(event)
-
-    with wave.open(str(_DIR / "this_is_a_test.wav"), "rb") as wav_file:
-        assert audio_start.rate == wav_file.getframerate()
-        assert audio_start.width == wav_file.getsampwidth()
-        assert audio_start.channels == wav_file.getnchannels()
-        expected_audio = wav_file.readframes(wav_file.getnframes())
-        expected_array = np.frombuffer(expected_audio, dtype=np.int16)
 
     actual_audio = bytes()
     while True:
@@ -89,6 +85,21 @@ async def test_piper() -> None:
             actual_audio += chunk.audio
 
     actual_array = np.frombuffer(actual_audio, dtype=np.int16)
+
+    if _REBASELINE:
+        with wave.open(str(_DIR / "this_is_a_test.wav"), "w") as wav_file:
+            wav_file.setframerate(audio_start.rate)
+            wav_file.setsampwidth(audio_start.width)
+            wav_file.setnchannels(audio_start.channels)
+            wav_file.writeframes(actual_audio)
+        return
+    else:
+        with wave.open(str(_DIR / "this_is_a_test.wav"), "rb") as wav_file:
+            assert audio_start.rate == wav_file.getframerate()
+            assert audio_start.width == wav_file.getsampwidth()
+            assert audio_start.channels == wav_file.getnchannels()
+            expected_audio = wav_file.readframes(wav_file.getnframes())
+            expected_array = np.frombuffer(expected_audio, dtype=np.int16)
 
     # Less than 20% difference in length
     assert (
