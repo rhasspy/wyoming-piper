@@ -12,13 +12,22 @@ import python_speech_features
 from wyoming.audio import AudioChunk, AudioStart, AudioStop
 from wyoming.event import async_read_event, async_write_event
 from wyoming.info import Describe, Info
-from wyoming.tts import Synthesize, SynthesizeVoice
+from wyoming.tts import (
+    Synthesize,
+    SynthesizeChunk,
+    SynthesizeStart,
+    SynthesizeStop,
+    SynthesizeStopped,
+    SynthesizeVoice,
+)
 
 from .dtw import compute_optimal_path
 
 _DIR = Path(__file__).parent
 _LOCAL_DIR = _DIR.parent / "local"
 _TIMEOUT = 60
+_VOICE = "en_US-ryan-low"
+_TEXT = "This is sentence one. This is sentence two."
 
 
 @pytest.mark.asyncio
@@ -33,6 +42,12 @@ async def test_piper() -> None:
         "en_US-ryan-low",
         "--data-dir",
         str(_LOCAL_DIR),
+        # Disable stochastic duration/audio variation so repeated runs
+        # produce comparable output against the golden fixture.
+        "--noise-scale",
+        "0",
+        "--noise-w-scale",
+        "0",
         stdin=PIPE,
         stdout=PIPE,
     )
@@ -101,3 +116,78 @@ async def test_piper() -> None:
     expected_mfcc = python_speech_features.mfcc(expected_array, winstep=0.02)
     actual_mfcc = python_speech_features.mfcc(actual_array, winstep=0.02)
     assert compute_optimal_path(actual_mfcc, expected_mfcc) < 10
+
+
+async def _synthesize(streaming: bool, sentence_silence: float) -> bytes:
+    """Synthesize two sentences and return the concatenated raw audio."""
+    args = [
+        sys.executable,
+        "-m",
+        "wyoming_piper",
+        "--uri",
+        "stdio://",
+        "--voice",
+        _VOICE,
+        "--data-dir",
+        str(_LOCAL_DIR),
+        "--sentence-silence",
+        str(sentence_silence),
+        # Disable stochastic duration/audio variation so repeated runs of
+        # the same text produce byte-identical, comparable output.
+        "--noise-scale",
+        "0",
+        "--noise-w-scale",
+        "0",
+    ]
+    if not streaming:
+        args.append("--no-streaming")
+
+    proc = await asyncio.create_subprocess_exec(*args, stdin=PIPE, stdout=PIPE)
+    assert proc.stdin is not None
+    assert proc.stdout is not None
+
+    if streaming:
+        await async_write_event(
+            SynthesizeStart(voice=SynthesizeVoice(_VOICE)).event(), proc.stdin
+        )
+        await async_write_event(SynthesizeChunk(_TEXT).event(), proc.stdin)
+        await async_write_event(SynthesizeStop().event(), proc.stdin)
+    else:
+        await async_write_event(
+            Synthesize(_TEXT, voice=SynthesizeVoice(_VOICE)).event(), proc.stdin
+        )
+
+    audio = bytearray()
+    while True:
+        event = await asyncio.wait_for(async_read_event(proc.stdout), timeout=_TIMEOUT)
+        assert event is not None
+
+        if AudioChunk.is_type(event.type):
+            audio += AudioChunk.from_event(event).audio
+        elif streaming and SynthesizeStopped.is_type(event.type):
+            break
+        elif (not streaming) and AudioStop.is_type(event.type):
+            break
+
+    proc.stdin.close()
+    await proc.wait()
+
+    return bytes(audio)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("streaming", [False, True])
+async def test_sentence_silence(streaming: bool) -> None:
+    """--sentence-silence should pad audio between sentences in both the
+    one-shot Synthesize path and the streaming SynthesizeStart/Chunk/Stop
+    path."""
+    silence_seconds = 1.0
+    sample_rate = 16000  # en_US-ryan-low
+    expected_added_bytes = int(sample_rate * silence_seconds) * 2  # 16-bit mono
+
+    without_silence = await _synthesize(streaming, sentence_silence=0.0)
+    with_silence = await _synthesize(streaming, sentence_silence=silence_seconds)
+
+    # One sentence boundary (two sentences), so exactly one span of silence
+    # should have been inserted between them.
+    assert len(with_silence) - len(without_silence) == expected_added_bytes

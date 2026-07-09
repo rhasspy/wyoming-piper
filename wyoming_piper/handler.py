@@ -33,6 +33,13 @@ _VOICE_NAME: Optional[str] = None
 _VOICE_LOCK = asyncio.Lock()
 
 
+def _silence_bytes(wav_writer: wave.Wave_write, seconds: float) -> bytes:
+    """Zero bytes for N seconds of silence matching the wav writer's format."""
+    num_frames = int(wav_writer.getframerate() * seconds)
+    bytes_per_frame = wav_writer.getsampwidth() * wav_writer.getnchannels()
+    return bytes(num_frames * bytes_per_frame)
+
+
 class PiperEventHandler(AsyncEventHandler):
     def __init__(
         self,
@@ -73,7 +80,10 @@ class PiperEventHandler(AsyncEventHandler):
                 for i, sentence in enumerate(self.sbd.add_chunk(synthesize.text)):
                     self._synthesize.text = sentence
                     await self._handle_synthesize(
-                        self._synthesize, send_start=(i == 0), send_stop=False
+                        self._synthesize,
+                        send_start=(i == 0),
+                        send_stop=False,
+                        add_silence=True,
                     )
                     start_sent = True
 
@@ -108,7 +118,7 @@ class PiperEventHandler(AsyncEventHandler):
                 for sentence in self.sbd.add_chunk(stream_chunk.text):
                     _LOGGER.debug("Synthesizing stream sentence: %s", sentence)
                     self._synthesize.text = sentence
-                    await self._handle_synthesize(self._synthesize)
+                    await self._handle_synthesize(self._synthesize, add_silence=True)
 
                 return True
 
@@ -137,7 +147,11 @@ class PiperEventHandler(AsyncEventHandler):
             raise err
 
     async def _handle_synthesize(
-        self, synthesize: Synthesize, send_start: bool = True, send_stop: bool = True
+        self,
+        synthesize: Synthesize,
+        send_start: bool = True,
+        send_stop: bool = True,
+        add_silence: bool = False,
     ) -> bool:
         global _VOICE, _VOICE_NAME
 
@@ -232,6 +246,11 @@ class PiperEventHandler(AsyncEventHandler):
                 wav_writer: wave.Wave_write = wave.open(output_file, "wb")
                 with wav_writer:
                     _VOICE.synthesize_wav(text, wav_writer, syn_config)
+
+                    if add_silence and self.cli_args.sentence_silence:
+                        wav_writer.writeframes(
+                            _silence_bytes(wav_writer, self.cli_args.sentence_silence)
+                        )
 
             output_file.seek(0)
 
