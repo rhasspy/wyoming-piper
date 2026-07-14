@@ -26,6 +26,6 @@ RUN \
 
 COPY ./ ./
 
-EXPOSE 10400
+EXPOSE 10200
 
 ENTRYPOINT ["bash", "docker_run.sh"]
