@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0
+
+- Add `--sentence-silence` (seconds of silence after each sentence)
+
 ## 2.2.2
 
 - Bump `piper-tts` to 1.4.1 (wheel fix)
