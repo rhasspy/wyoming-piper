@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1
+
+- Fix publishing
+
 ## 2.3.0
 
 - Add `--sentence-silence` (seconds of silence after each sentence)
