@@ -13,7 +13,7 @@ from wyoming.server import AsyncServer, AsyncTcpServer
 
 from . import __version__
 from .download import ensure_voice_exists, find_voice, get_voices
-from .handler import PiperEventHandler
+from .handler import PiperEventHandler, get_omnivoice_voices, load_omnivoice
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,9 +22,15 @@ async def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--backend",
+        default="piper",
+        choices=("piper", "omnivoice"),
+        help="TTS backend to use (default: piper)",
+    )
+    parser.add_argument(
         "--voice",
-        required=True,
-        help="Default Piper voice to use (e.g., en_US-lessac-medium)",
+        help="Default Piper voice to use (e.g., en_US-lessac-medium). "
+        "Required for the piper backend.",
     )
     parser.add_argument("--uri", default="stdio://", help="unix:// or tcp://")
     #
@@ -84,6 +90,56 @@ async def main() -> None:
         help="Use CUDA if available (requires onnxruntime-gpu)",
     )
     #
+    # Web UI for managing custom voices (runs alongside the Wyoming server)
+    parser.add_argument(
+        "--web-server",
+        action="store_true",
+        help="Run a web UI for managing custom Piper/OmniVoice voices "
+        "(requires the 'web' optional dependencies)",
+    )
+    parser.add_argument(
+        "--web-server-host",
+        default="127.0.0.1",
+        help="Host to bind the web UI to (default: 127.0.0.1)",
+    )
+    parser.add_argument(
+        "--web-server-port",
+        type=int,
+        default=5000,
+        help="Port for the web UI (default: 5000)",
+    )
+    #
+    # OmniVoice backend options
+    parser.add_argument(
+        "--omnivoice-steps",
+        type=int,
+        default=32,
+        help="Number of MaskGIT decode steps for the omnivoice backend "
+        "(default: 32, fewer is faster)",
+    )
+    parser.add_argument(
+        "--omnivoice-ref-dir",
+        help="Directory of reference voices for cloning (omnivoice backend), "
+        "organized as <language>/<voice_name>/ref.{wav,txt}. Each is advertised "
+        "as a voice; requests without a voice use the built-in speaker.",
+    )
+    parser.add_argument(
+        "--omnivoice-language",
+        default="English",
+        help="Language for the omnivoice backend (default: English)",
+    )
+    parser.add_argument(
+        "--omnivoice-onnx-repo",
+        help="HuggingFace repo id for the int4 ONNX graph (omnivoice backend). "
+        "Overrides the built-in default.",
+    )
+    parser.add_argument(
+        "--local-files-only",
+        action="store_true",
+        help="Only use locally cached model files; never download "
+        "(sets HuggingFace hub to offline mode)",
+    )
+    #
     parser.add_argument("--debug", action="store_true", help="Log DEBUG messages")
     parser.add_argument(
         "--log-format", default=logging.BASIC_FORMAT, help="Format for log messages"
@@ -105,6 +161,71 @@ async def main() -> None:
     )
     _LOGGER.debug(args)
 
+    if args.backend == "omnivoice":
+        wyoming_info, voices_info = _setup_omnivoice(args)
+    else:
+        if not args.voice:
+            parser.error("--voice is required for the piper backend")
+
+        wyoming_info, voices_info = _setup_piper(args)
+
+    # Start server
+    server = AsyncServer.from_uri(args.uri)
+
+    if args.zeroconf:
+        if not isinstance(server, AsyncTcpServer):
+            raise ValueError("Zeroconf requires tcp:// uri")
+
+        from wyoming.zeroconf import HomeAssistantZeroconf
+
+        tcp_server: AsyncTcpServer = server
+        hass_zeroconf = HomeAssistantZeroconf(
+            name=args.zeroconf, port=tcp_server.port, host=tcp_server.host
+        )
+        await hass_zeroconf.register_server()
+        _LOGGER.debug("Zeroconf discovery enabled")
+
+    # Optional web UI for managing custom voices, in a background thread.
+    if args.web_server:
+        try:
+            from .web_server import make_web_server, run_web_server
+        except ImportError as err:
+            parser.error(
+                f"--web-server requires the 'web' optional dependencies ({err})"
+            )
+
+        run_web_server(
+            make_web_server(args),
+            host=args.web_server_host,
+            port=args.web_server_port,
+        )
+
+    _LOGGER.info("Ready")
+    server_task = asyncio.create_task(
+        server.run(
+            partial(
+                PiperEventHandler,
+                wyoming_info,
+                args,
+                voices_info,
+            )
+        )
+    )
+    loop = asyncio.get_running_loop()
+    loop.add_signal_handler(signal.SIGINT, server_task.cancel)
+    loop.add_signal_handler(signal.SIGTERM, server_task.cancel)
+
+    try:
+        await server_task
+    except asyncio.CancelledError:
+        _LOGGER.info("Server stopped")
+
+
+# -----------------------------------------------------------------------------
+
+
+def _setup_piper(args: argparse.Namespace) -> "tuple[Info, Dict[str, Any]]":
+    """Build Wyoming info and voice table for the piper backend."""
     # Load voice info
     voices_info = get_voices(args.download_dir, update_voices=args.update_voices)
 
@@ -211,41 +332,79 @@ async def main() -> None:
 
     ensure_voice_exists(voice_name, args.data_dir, args.download_dir, voices_info)
 
-    # Start server
-    server = AsyncServer.from_uri(args.uri)
+    return wyoming_info, voices_info
 
-    if args.zeroconf:
-        if not isinstance(server, AsyncTcpServer):
-            raise ValueError("Zeroconf requires tcp:// uri")
 
-        from wyoming.zeroconf import HomeAssistantZeroconf
+# -----------------------------------------------------------------------------
 
-        tcp_server: AsyncTcpServer = server
-        hass_zeroconf = HomeAssistantZeroconf(
-            name=args.zeroconf, port=tcp_server.port, host=tcp_server.host
+
+def _setup_omnivoice(args: argparse.Namespace) -> "tuple[Info, Dict[str, Any]]":
+    """Build Wyoming info and ensure models for the omnivoice backend.
+
+    The HuggingFace cache is pointed at ``--download-dir`` and the model is
+    downloaded there (unless ``--local-files-only`` is set).
+    """
+    import os
+
+    # Point the HuggingFace cache at the download dir before any hub import.
+    os.environ["HF_HOME"] = str(Path(args.download_dir).resolve())
+    if args.local_files_only:
+        os.environ["HF_HUB_OFFLINE"] = "1"
+
+    # Download (if needed) and load the shared model + reference voices now,
+    # before serving.
+    load_omnivoice(args)
+
+    from .omnivoice import (
+        DEFAULT_VOICE_NAME,
+        advertise_language,
+        get_supported_languages,
+    )
+
+    attribution = Attribution(name="k2-fsa", url="https://github.com/k2-fsa/OmniVoice")
+
+    # Built-in (no-reference) speaker: advertised for every supported language.
+    # Used for this voice, an empty voice name, or an unknown one.
+    voices = [
+        TtsVoice(
+            name=DEFAULT_VOICE_NAME,
+            description="OmniVoice",
+            version=None,
+            attribution=attribution,
+            installed=True,
+            languages=get_supported_languages(),
         )
-        await hass_zeroconf.register_server()
-        _LOGGER.debug("Zeroconf discovery enabled")
-
-    _LOGGER.info("Ready")
-    server_task = asyncio.create_task(
-        server.run(
-            partial(
-                PiperEventHandler,
-                wyoming_info,
-                args,
-                voices_info,
+    ]
+    # Cloning and voice-design (instruct) voices discovered under --omnivoice-ref-dir.
+    for ref in get_omnivoice_voices().values():
+        lang = advertise_language(ref.language)
+        voices.append(
+            TtsVoice(
+                name=ref.name,
+                description=ref.name,
+                version=None,
+                attribution=attribution,
+                installed=True,
+                languages=[lang],
             )
         )
-    )
-    loop = asyncio.get_running_loop()
-    loop.add_signal_handler(signal.SIGINT, server_task.cancel)
-    loop.add_signal_handler(signal.SIGTERM, server_task.cancel)
 
-    try:
-        await server_task
-    except asyncio.CancelledError:
-        _LOGGER.info("Server stopped")
+    wyoming_info = Info(
+        tts=[
+            TtsProgram(
+                name="omnivoice",
+                description="High-quality multilingual voice-cloning TTS",
+                attribution=attribution,
+                installed=True,
+                voices=voices,
+                version=__version__,
+                supports_synthesize_streaming=(not args.no_streaming),
+            )
+        ],
+    )
+
+    # voices_info is unused by the omnivoice backend.
+    return wyoming_info, {}
 
 
 # -----------------------------------------------------------------------------

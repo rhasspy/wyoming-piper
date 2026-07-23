@@ -1,6 +1,6 @@
 [project]
 name = "wyoming-piper"
-version = "2.3.1"
+version = "2.4.0"
 description = "Wyoming Server for Piper"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -77,4 +77,13 @@ zeroconf = [
 ]
 zh = [
     "piper-tts[zh]",
+]
+omnivoice = [
+    "omnivoice",
+    "onnxruntime",
+    "huggingface_hub",
+    "numpy",
+]
+web = [
+    "flask>=3,<4",
 ]

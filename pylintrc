@@ -31,7 +31,9 @@ disable=
   missing-class-docstring,
   missing-function-docstring,
   import-error,
-  consider-using-with
+  consider-using-with,
+  too-many-positional-arguments,
+  use-dict-literal
 
 [FORMAT]
 expected-line-ending-format=LF

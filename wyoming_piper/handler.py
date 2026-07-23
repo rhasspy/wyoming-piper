@@ -32,6 +32,47 @@ _VOICE: Optional[PiperVoice] = None
 _VOICE_NAME: Optional[str] = None
 _VOICE_LOCK = asyncio.Lock()
 
+# OmniVoice backend model (loaded once, kept in memory) and its reference voices
+_OMNIVOICE: Optional[Any] = None
+_OMNIVOICE_VOICES: Dict[str, Any] = {}  # voice name -> OmniVoiceRef
+
+
+def get_omnivoice_voices() -> Dict[str, Any]:
+    """Return the loaded OmniVoice reference voices (name -> OmniVoiceRef)."""
+    return _OMNIVOICE_VOICES
+
+
+def load_omnivoice(cli_args: argparse.Namespace) -> None:
+    """Load the shared OmniVoice model once (no-op if already loaded).
+
+    Called at startup so the (heavy) model is ready before the first request;
+    handlers share this single instance, serialized by ``_VOICE_LOCK``.
+    """
+    global _OMNIVOICE, _OMNIVOICE_VOICES
+
+    if _OMNIVOICE is not None:
+        return
+
+    from .omnivoice import OmniVoiceModel, ensure_omnivoice_downloaded, scan_ref_dir
+
+    if cli_args.omnivoice_ref_dir:
+        _OMNIVOICE_VOICES = {
+            v.name: v for v in scan_ref_dir(cli_args.omnivoice_ref_dir)
+        }
+
+    _LOGGER.info("Loading OmniVoice model")
+    onnx_path = ensure_omnivoice_downloaded(
+        local_files_only=cli_args.local_files_only,
+        onnx_repo=cli_args.omnivoice_onnx_repo,
+        data_dirs=cli_args.data_dir,
+    )
+    _OMNIVOICE = OmniVoiceModel(
+        onnx_path,
+        num_step=cli_args.omnivoice_steps,
+        default_language=cli_args.omnivoice_language,
+        local_files_only=cli_args.local_files_only,
+    )
+
 
 def _silence_bytes(wav_writer: wave.Wave_write, seconds: float) -> bytes:
     """Zero bytes for N seconds of silence matching the wav writer's format."""
@@ -153,8 +194,6 @@ class PiperEventHandler(AsyncEventHandler):
         send_stop: bool = True,
         add_silence: bool = False,
     ) -> bool:
-        global _VOICE, _VOICE_NAME
-
         _LOGGER.debug(synthesize)
 
         raw_text = synthesize.text
@@ -173,79 +212,48 @@ class PiperEventHandler(AsyncEventHandler):
             if not has_punctuation:
                 text = text + self.cli_args.auto_punctuation[0]
 
-        # Resolve voice
         _LOGGER.debug("synthesize: raw_text=%s, text='%s'", raw_text, text)
+
+        # Resolve voice (piper backend only)
         voice_name: Optional[str] = None
         voice_speaker: Optional[str] = None
-        if synthesize.voice is not None:
-            voice_name = synthesize.voice.name
-            voice_speaker = synthesize.voice.speaker
+        if self.cli_args.backend != "omnivoice":
+            if synthesize.voice is not None:
+                voice_name = synthesize.voice.name
+                voice_speaker = synthesize.voice.speaker
 
-        if voice_name is None:
-            # Default voice
-            voice_name = self.cli_args.voice
+            if voice_name is None:
+                # Default voice
+                voice_name = self.cli_args.voice
 
-        if voice_name == self.cli_args.voice:
-            # Default speaker
-            voice_speaker = voice_speaker or self.cli_args.speaker
+            if voice_name == self.cli_args.voice:
+                # Default speaker
+                voice_speaker = voice_speaker or self.cli_args.speaker
 
-        assert voice_name is not None
+            assert voice_name is not None
 
-        # Resolve alias
-        voice_info = self.voices_info.get(voice_name, {})
-        voice_name = voice_info.get("key", voice_name)
-        assert voice_name is not None
+            # Resolve alias
+            voice_info = self.voices_info.get(voice_name, {})
+            voice_name = voice_info.get("key", voice_name)
+            assert voice_name is not None
 
         with tempfile.NamedTemporaryFile(mode="wb+", suffix=".wav") as output_file:
             async with _VOICE_LOCK:
-                if voice_name != _VOICE_NAME:
-                    # Load new voice
-                    _LOGGER.debug("Loading voice: %s", _VOICE_NAME)
-                    ensure_voice_exists(
-                        voice_name,
-                        self.cli_args.data_dir,
-                        self.cli_args.download_dir,
-                        self.voices_info,
-                    )
-                    model_path, config_path = find_voice(
-                        voice_name, self.cli_args.data_dir
-                    )
-                    _VOICE = PiperVoice.load(
-                        model_path, config_path, use_cuda=self.cli_args.use_cuda
-                    )
-                    _VOICE_NAME = voice_name
-
-                assert _VOICE is not None
-
-                syn_config = SynthesisConfig()
-                if voice_speaker is not None:
-                    syn_config.speaker_id = _VOICE.config.speaker_id_map.get(
-                        voice_speaker
-                    )
-                    if syn_config.speaker_id is None:
-                        try:
-                            # Try to interpret as an id
-                            syn_config.speaker_id = int(voice_speaker)
-                        except ValueError:
-                            pass
-
-                    if syn_config.speaker_id is None:
-                        _LOGGER.warning(
-                            "No speaker '%s' for voice '%s'", voice_speaker, voice_name
-                        )
-
-                if self.cli_args.length_scale is not None:
-                    syn_config.length_scale = self.cli_args.length_scale
-
-                if self.cli_args.noise_scale is not None:
-                    syn_config.noise_scale = self.cli_args.noise_scale
-
-                if self.cli_args.noise_w_scale is not None:
-                    syn_config.noise_w_scale = self.cli_args.noise_w_scale
-
                 wav_writer: wave.Wave_write = wave.open(output_file, "wb")
                 with wav_writer:
-                    _VOICE.synthesize_wav(text, wav_writer, syn_config)
+                    if self.cli_args.backend == "omnivoice":
+                        req_voice = req_language = None
+                        if synthesize.voice is not None:
+                            req_voice = synthesize.voice.name
+                            req_language = synthesize.voice.language
+                        self._synthesize_omnivoice(
+                            text, wav_writer, req_voice, req_language
+                        )
+                    else:
+                        assert voice_name is not None
+                        self._synthesize_piper(
+                            text, wav_writer, voice_name, voice_speaker
+                        )
 
                     if add_silence and self.cli_args.sentence_silence:
                         wav_writer.writeframes(
@@ -293,3 +301,96 @@ class PiperEventHandler(AsyncEventHandler):
                 await self.write_event(AudioStop().event())
 
         return True
+
+    def _synthesize_piper(
+        self,
+        text: str,
+        wav_writer: wave.Wave_write,
+        voice_name: str,
+        voice_speaker: Optional[str],
+    ) -> None:
+        """Synthesize with the piper backend into ``wav_writer``."""
+        global _VOICE, _VOICE_NAME
+
+        if voice_name != _VOICE_NAME:
+            # Load new voice
+            _LOGGER.debug("Loading voice: %s", voice_name)
+            ensure_voice_exists(
+                voice_name,
+                self.cli_args.data_dir,
+                self.cli_args.download_dir,
+                self.voices_info,
+            )
+            model_path, config_path = find_voice(voice_name, self.cli_args.data_dir)
+            _VOICE = PiperVoice.load(
+                model_path, config_path, use_cuda=self.cli_args.use_cuda
+            )
+            _VOICE_NAME = voice_name
+
+        assert _VOICE is not None
+
+        syn_config = SynthesisConfig()
+        if voice_speaker is not None:
+            syn_config.speaker_id = _VOICE.config.speaker_id_map.get(voice_speaker)
+            if syn_config.speaker_id is None:
+                try:
+                    # Try to interpret as an id
+                    syn_config.speaker_id = int(voice_speaker)
+                except ValueError:
+                    pass
+
+            if syn_config.speaker_id is None:
+                _LOGGER.warning(
+                    "No speaker '%s' for voice '%s'", voice_speaker, voice_name
+                )
+
+        if self.cli_args.length_scale is not None:
+            syn_config.length_scale = self.cli_args.length_scale
+
+        if self.cli_args.noise_scale is not None:
+            syn_config.noise_scale = self.cli_args.noise_scale
+
+        if self.cli_args.noise_w_scale is not None:
+            syn_config.noise_w_scale = self.cli_args.noise_w_scale
+
+        _VOICE.synthesize_wav(text, wav_writer, syn_config)
+
+    def _synthesize_omnivoice(
+        self,
+        text: str,
+        wav_writer: wave.Wave_write,
+        voice_name: Optional[str] = None,
+        language: Optional[str] = None,
+    ) -> None:
+        """Synthesize with the omnivoice (ONNX) backend into ``wav_writer``.
+
+        Uses the shared model loaded at startup; access is serialized by the
+        caller via ``_VOICE_LOCK``. A known ``voice_name`` selects a cloning
+        reference voice or a voice-design (instruct) voice, using its own
+        language; otherwise the built-in OmniVoice speaker is used with the
+        request/default ``language``.
+        """
+        assert _OMNIVOICE is not None, "OmniVoice model was not loaded"
+
+        from .omnivoice import DEFAULT_VOICE_NAME
+
+        ref = None
+        if voice_name and voice_name != DEFAULT_VOICE_NAME:
+            ref = _OMNIVOICE_VOICES.get(voice_name)
+            if ref is None:
+                _LOGGER.debug(
+                    "Unknown OmniVoice voice %r; using built-in speaker", voice_name
+                )
+
+        if ref is not None:
+            _OMNIVOICE.synthesize_wav(
+                text,
+                wav_writer,
+                ref_audio=ref.ref_audio,
+                ref_text=ref.ref_text,
+                instruct=ref.instruct,
+                language=ref.language,
+            )
+        else:
+            # Built-in speaker (voice "default", empty, or unknown).
+            _OMNIVOICE.synthesize_wav(text, wav_writer, language=language)
