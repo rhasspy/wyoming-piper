@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.4.0
+
+- Add experimental `--backend omnivoice` for [OmniVoice](https://github.com/k2-fsa/OmniVoice) TTS via onnxruntime
+    - `--omnivoice-steps` to configure MaskGIT decode steps (default: 32)
+    - `--omnivoice-ref-dir` for custom voices: a directory of voices organized
+      as `<language>/<voice_name>/`, loaded at startup and advertised as voices.
+      Each voice directory is either a cloning voice (`ref.{wav,txt}`) or a
+      voice-design voice (`instruct.txt`, whose text describes the desired voice
+      style). A `default` voice is also advertised for every supported language;
+      it (or an empty/unknown voice name) uses the built-in speaker.
+    - `--omnivoice-language` to set the default synthesis language (default:
+      English); per-request language codes (`en_US`, `en-US`) are also honored
+    - `--omnivoice-onnx-repo` to override the HuggingFace repo for the ONNX graph
+    - block-wise int4 quantization is hardcoded for now (clean audio at low step
+      counts, e.g. `--omnivoice-steps 10`); reproduce with
+      `script/quantize_omnivoice.py`
+    - the ONNX model is used from a `--data-dir` if present there, otherwise
+      downloaded into `--download-dir` (used as the HuggingFace cache)
+    - install with the `omnivoice` optional dependencies
+- Add `--local-files-only` to run the HuggingFace loader in offline mode
+- Add `--web-server` for a web UI (runs alongside the Wyoming server) to manage custom and cloned voices
+
 ## 2.3.1
 
 - Fix publishing

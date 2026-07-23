@@ -20,12 +20,13 @@ RUN \
     && .venv/bin/pip3 install --no-cache-dir \
         --extra-index-url https://www.piwheels.org/simple \
         --extra-index-url https://download.pytorch.org/whl/cpu \
-        -e '.[zeroconf,zh]' \
+        -e '.[zeroconf,zh,omnivoice,web]' \
     \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./ ./
 
 EXPOSE 10200
+EXPOSE 5000
 
 ENTRYPOINT ["bash", "docker_run.sh"]
